@@ -1,0 +1,19 @@
+{
+  "name": "ia-educativa-sordos",
+  "version": "1.0.0",
+  "description": "Aplicación web con profesor virtual de IA para enseñanza de programación orientada a objetos, con accesibilidad para personas sordas",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"yarn frontend dev\" \"yarn backend dev\"",
+    "build": "yarn frontend build && yarn backend build",
+    "lint": "yarn frontend lint && yarn backend lint"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
