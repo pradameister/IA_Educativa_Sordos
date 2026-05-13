@@ -5,8 +5,9 @@ import { getAIResponse } from './openai'
 import { ChatMessage, ChatRequest, ChatResponse, LessonsResponse } from 'shared'
 import { connectDB } from './db'
 import Lesson from './models/Lesson'
+import User from './models/User'
 import authRoutes from './auth'
-import { authMiddleware } from './middleware'
+import { authMiddleware, AuthRequest } from './middleware'
 
 dotenv.config({ path: '.env.local' })
 
@@ -79,7 +80,7 @@ app.post('/api/lessons/seed', async (req: Request, res: Response) => {
 })
 
 // Chat endpoint with OpenAI (Protected)
-app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
+app.post('/api/chat', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { message, history } = req.body as ChatRequest
 
@@ -121,6 +122,39 @@ Tu objetivo es enseñar de forma clara, paso a paso, con ejemplos en JavaScript.
     })
   }
 })
+
+// Mark lesson as completed (Protected)
+app.post('/api/lessons/:id/complete', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const lessonId = req.params.id;
+    const userId = req.userId;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    // Check if already completed
+    if (!user.progress.completedLessons.includes(lessonId as any)) {
+      user.progress.completedLessons.push(lessonId as any);
+      await user.save();
+    }
+
+    res.json({ message: 'Lección marcada como completada', progress: user.progress });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar el progreso' });
+  }
+});
+
+// Get user progress (Protected)
+app.get('/api/user/progress', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const user = await User.findById(req.userId).populate('progress.completedLessons');
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    res.json({ progress: user.progress });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener el progreso' });
+  }
+});
 
 // 404 handler
 app.use((req: Request, res: Response) => {
