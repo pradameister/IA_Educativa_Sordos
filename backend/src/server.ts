@@ -62,7 +62,9 @@ Piensa en un coche. Un coche tiene características (color, marca, modelo, veloc
 **Beneficios de POO:**
 1.  **Organización:** Tu código es más fácil de entender y mantener.
 2.  **Reutilización:** Puedes usar los mismos "bloques" (objetos) en diferentes partes de tu programa.
-3.  **Flexibilidad:** Es más fácil añadir nuevas características o cambiar las existentes.`
+3.  **Flexibilidad:** Es más fácil añadir nuevas características o cambiar las existentes.`,
+        exercise: 'Describe con tus propias palabras qué es un objeto en el mundo real y menciona 3 características que podría tener.',
+        expectedCode: 'objeto, caracteristicas, propiedades'
       },
       {
         title: 'Clases y Objetos',
@@ -91,7 +93,9 @@ class Coche {
 }
 const miCoche = new Coche("Toyota", "Corolla", "rojo");
 miCoche.mostrarInfo();
-\`\`\``
+\`\`\``,
+        exercise: 'Crea una clase llamada "Persona" que tenga un constructor con "nombre" y "edad". Luego crea un objeto llamado "estudiante" con tu nombre.',
+        expectedCode: 'class Persona, constructor, new Persona'
       },
       {
         title: 'Herencia en JavaScript',

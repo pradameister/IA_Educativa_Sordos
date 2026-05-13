@@ -3,11 +3,12 @@ import { ChatProvider } from './context/ChatContext'
 import ChatInterface from './components/ChatInterface'
 import LessonsList from './components/LessonsList'
 import AuthForms from './components/AuthForms'
+import Glossary from './components/Glossary'
 import { authService } from './services/auth'
 import './services/auth' // Initialize axios interceptors
 
 function App() {
-  const [view, setView] = useState<'home' | 'lessons' | 'chat'>('home')
+  const [view, setView] = useState<'home' | 'lessons' | 'chat' | 'glossary'>('home')
   const [isAuthenticated, setIsAuthenticated] = useState(authService.isAuthenticated())
   const [user, setUser] = useState<any>(null)
 
@@ -63,6 +64,16 @@ function App() {
                   }`}
                 >
                   Chat
+                </button>
+                <button
+                  onClick={() => setView('glossary')}
+                  className={`px-4 py-2 rounded transition-colors ${
+                    view === 'glossary'
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                  }`}
+                >
+                  Glosario
                 </button>
               </div>
               
@@ -134,6 +145,10 @@ function App() {
 
           {view === 'chat' && (
             isAuthenticated ? <ChatInterface /> : <AuthForms onLoginSuccess={() => setIsAuthenticated(true)} />
+          )}
+
+          {view === 'glossary' && (
+            isAuthenticated ? <Glossary /> : <AuthForms onLoginSuccess={() => setIsAuthenticated(true)} />
           )}
         </div>
 

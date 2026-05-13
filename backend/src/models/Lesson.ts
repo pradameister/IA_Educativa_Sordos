@@ -13,6 +13,8 @@ const LessonSchema: Schema = new Schema({
   },
   topic: { type: String, required: true },
   content: { type: String },
+  exercise: { type: String }, // Descripción del reto
+  expectedCode: { type: String }, // Código de referencia o palabras clave
 }, {
   timestamps: true,
   toJSON: {
