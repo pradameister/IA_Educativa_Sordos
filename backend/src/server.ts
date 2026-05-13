@@ -3,10 +3,13 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import { getAIResponse } from './openai'
 import { ChatMessage, ChatRequest, ChatResponse, LessonsResponse } from 'shared'
+import { connectDB } from './db'
+import Lesson from './models/Lesson'
 
 dotenv.config({ path: '.env.local' })
 
 const app: Express = express()
+connectDB()
 const PORT = process.env.PORT || 3000
 
 // Middleware
@@ -19,39 +22,55 @@ app.get('/api/health', (req: Request, res: Response) => {
 })
 
 // Get lessons
-app.get('/api/lessons', (req: Request, res: Response) => {
-  res.json({
-    lessons: [
+app.get('/api/lessons', async (req: Request, res: Response) => {
+  try {
+    const lessons = await Lesson.find()
+    res.json({ lessons })
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener las lecciones' })
+  }
+})
+
+// Seed lessons (Helper endpoint to populate DB)
+app.post('/api/lessons/seed', async (req: Request, res: Response) => {
+  try {
+    const count = await Lesson.countDocuments()
+    if (count > 0) {
+      return res.json({ message: 'La base de datos ya tiene lecciones' })
+    }
+
+    const initialLessons = [
       {
-        id: 1,
         title: 'Introducción a la Programación Orientada a Objetos',
         description: 'Conceptos fundamentales de POO y sus ventajas',
         difficulty: 'beginner',
         topic: 'POO',
       },
       {
-        id: 2,
         title: 'Clases y Objetos',
         description: 'Aprende a crear clases e instanciar objetos en JavaScript',
         difficulty: 'beginner',
         topic: 'POO',
       },
       {
-        id: 3,
         title: 'Herencia en JavaScript',
         description: 'Cómo reutilizar código mediante herencia',
         difficulty: 'intermediate',
         topic: 'POO',
       },
       {
-        id: 4,
         title: 'Polimorfismo y Encapsulación',
         description: 'Conceptos avanzados de POO',
         difficulty: 'intermediate',
         topic: 'POO',
       },
-    ],
-  })
+    ]
+
+    await Lesson.insertMany(initialLessons)
+    res.json({ message: 'Lecciones iniciales creadas con éxito' })
+  } catch (error) {
+    res.status(500).json({ error: 'Error al crear lecciones iniciales' })
+  }
 })
 
 // Chat endpoint with OpenAI
