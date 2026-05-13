@@ -1,7 +1,8 @@
 import express, { Express, Request, Response } from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import { getAIResponse, ChatMessage } from './openai'
+import { getAIResponse } from './openai'
+import { ChatMessage, ChatRequest, ChatResponse, LessonsResponse } from 'shared'
 
 dotenv.config({ path: '.env.local' })
 
@@ -56,10 +57,7 @@ app.get('/api/lessons', (req: Request, res: Response) => {
 // Chat endpoint with OpenAI
 app.post('/api/chat', async (req: Request, res: Response) => {
   try {
-    const { message, history } = req.body as {
-      message?: string
-      history?: Array<{ role: string; content: string }>
-    }
+    const { message, history } = req.body as ChatRequest
 
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
       return res.status(400).json({ error: 'Message is required' })
@@ -89,7 +87,8 @@ Tu objetivo es enseñar de forma clara, paso a paso, con ejemplos en JavaScript.
     console.log(`📨 Chat request: ${message.substring(0, 50)}...`)
     const aiResponse = await getAIResponse(messages)
 
-    res.json({ response: aiResponse })
+    const response: ChatResponse = { response: aiResponse }
+    res.json(response)
   } catch (error: any) {
     console.error('❌ Chat error:', error?.response?.data ?? error.message ?? error)
     res.status(500).json({

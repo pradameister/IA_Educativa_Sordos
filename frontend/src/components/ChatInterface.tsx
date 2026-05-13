@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useChat } from '../context/ChatContext';
 import axios from 'axios';
+import { ChatRequest, ChatResponse, ChatMessage } from 'shared';
 
 const ChatInterface: React.FC = () => {
   const { messages, addMessage } = useChat();
@@ -10,16 +11,18 @@ const ChatInterface: React.FC = () => {
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    const userMessage = { role: 'user' as const, content: input };
+    const userMessage: ChatMessage = { role: 'user', content: input };
     addMessage(userMessage);
     setInput('');
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/chat', {
+      const payload: ChatRequest = {
         message: input,
         history: messages,
-      });
+      };
+
+      const response = await axios.post<ChatResponse>('http://localhost:3000/api/chat', payload);
 
       addMessage({ role: 'assistant', content: response.data.response });
     } catch (error) {

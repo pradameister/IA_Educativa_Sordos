@@ -7,10 +7,8 @@ if (!OPENAI_API_KEY) {
   console.warn('OPENAI_API_KEY not set — OpenAI requests will fail')
 }
 
-export interface ChatMessage {
-  role: 'system' | 'user' | 'assistant'
-  content: string
-}
+import { ChatMessage } from 'shared'
+export { ChatMessage }
 
 export async function getAIResponse(messages: ChatMessage[]) {
   if (!OPENAI_API_KEY) {

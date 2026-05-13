@@ -1,22 +1,19 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-}
+import { ChatMessage } from 'shared';
 
 interface ChatContextType {
-  messages: Message[];
-  addMessage: (message: Message) => void;
+  messages: ChatMessage[];
+  addMessage: (message: ChatMessage) => void;
   clearMessages: () => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  const addMessage = (message: Message) => {
+  const addMessage = (message: ChatMessage) => {
     setMessages((prev) => [...prev, message]);
   };
 

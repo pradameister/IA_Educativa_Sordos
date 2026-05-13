@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
-interface Lesson {
-  id: number;
-  title: string;
-  description: string;
-  difficulty: string;
-  topic: string;
-}
+import { Lesson, LessonsResponse } from 'shared';
 
 const LessonsList: React.FC = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -16,7 +9,7 @@ const LessonsList: React.FC = () => {
   useEffect(() => {
     const fetchLessons = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/lessons');
+        const response = await axios.get<LessonsResponse>('http://localhost:3000/api/lessons');
         setLessons(response.data.lessons);
       } catch (error) {
         console.error('Error fetching lessons:', error);
