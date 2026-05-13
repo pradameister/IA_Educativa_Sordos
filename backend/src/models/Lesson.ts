@@ -19,7 +19,7 @@ const LessonSchema: Schema = new Schema({
   timestamps: true,
   toJSON: {
     transform: (_doc, ret) => {
-      ret.id = ret._id.toString();
+      (ret as any).id = ret._id.toString();
       delete (ret as any)._id;
       delete (ret as any)["__v"];
     }
