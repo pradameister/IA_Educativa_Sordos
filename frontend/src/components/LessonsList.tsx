@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Lesson, LessonsResponse } from 'shared';
+import LessonViewer from './LessonViewer';
 
 const LessonsList: React.FC = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [completedIds, setCompletedIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +41,17 @@ const LessonsList: React.FC = () => {
 
   if (loading) return <div className="text-center py-10">Cargando lecciones...</div>;
 
+  if (selectedLesson) {
+    return (
+      <LessonViewer 
+        lesson={selectedLesson} 
+        onBack={() => setSelectedLesson(null)} 
+        onComplete={handleComplete}
+        isCompleted={completedIds.includes(selectedLesson.id.toString())}
+      />
+    );
+  }
+
   const progressPercentage = lessons.length > 0 ? Math.round((completedIds.length / lessons.length) * 100) : 0;
 
   return (
@@ -62,7 +75,7 @@ const LessonsList: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {lessons.map((lesson: any) => {
-        const isCompleted = completedIds.includes(lesson.id);
+        const isCompleted = completedIds.includes(lesson.id.toString());
         return (
           <div key={lesson.id} className={`bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 ${isCompleted ? 'border-green-500' : 'border-indigo-500'}`}>
             <div className="flex justify-between items-start mb-2">
@@ -78,12 +91,15 @@ const LessonsList: React.FC = () => {
             </div>
             <p className="text-gray-600 mb-4">{lesson.description}</p>
             <div className="flex justify-between items-center">
-              <button className="text-indigo-600 font-semibold hover:text-indigo-800">
+              <button 
+                onClick={() => setSelectedLesson(lesson)}
+                className="text-indigo-600 font-semibold hover:text-indigo-800"
+              >
                 Comenzar lección →
               </button>
               {!isCompleted && (
                 <button 
-                  onClick={() => handleComplete(lesson.id)}
+                  onClick={() => handleComplete(lesson.id.toString())}
                   className="text-xs bg-gray-100 hover:bg-green-100 text-gray-600 hover:text-green-700 px-3 py-1 rounded transition-colors"
                 >
                   Marcar como completada

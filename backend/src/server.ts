@@ -51,27 +51,120 @@ app.post('/api/lessons/seed', async (req: Request, res: Response) => {
         description: 'Conceptos fundamentales de POO y sus ventajas',
         difficulty: 'beginner',
         topic: 'POO',
+        content: `¡Hola! Bienvenido a tu primera lección de Programación Orientada a Objetos, o POO. Imagina que la programación es como construir cosas. Antes, construíamos pieza por pieza, como un castillo de arena. Con POO, es como usar bloques de LEGO: cada bloque ya tiene una forma y una función, y podemos unirlos para crear algo más grande y complejo.
+
+**¿Qué es POO?**
+POO es una forma de organizar tu código para que se parezca más al mundo real. En lugar de pensar en "acciones" que el programa debe hacer, pensamos en "cosas" (objetos) que tienen características y pueden hacer cosas.
+
+**Analogía Visual: Un Coche**
+Piensa en un coche. Un coche tiene características (color, marca, modelo, velocidad) y puede hacer acciones (acelerar, frenar, girar). En POO, el "coche" sería un **objeto**.
+
+**Beneficios de POO:**
+1.  **Organización:** Tu código es más fácil de entender y mantener.
+2.  **Reutilización:** Puedes usar los mismos "bloques" (objetos) en diferentes partes de tu programa.
+3.  **Flexibilidad:** Es más fácil añadir nuevas características o cambiar las existentes.`
       },
       {
         title: 'Clases y Objetos',
         description: 'Aprende a crear clases e instanciar objetos en JavaScript',
         difficulty: 'beginner',
         topic: 'POO',
+        content: `En la lección anterior, hablamos de los "bloques de LEGO" de la POO. Ahora, vamos a ver cómo se crean: con **Clases** y **Objetos**.
+
+**Analogía Visual: Un Molde de Galletas y las Galletas**
+Imagina que quieres hacer muchas galletas iguales. No haces cada galleta desde cero, ¿verdad? Usas un **molde de galletas**. El molde es la **Clase**. Todas las galletas que haces con ese molde son los **Objetos**.
+
+*   **Clase:** Es el **plano, el molde, la plantilla** para crear objetos. Define las características (propiedades) y las acciones (métodos) que tendrán todos los objetos de ese tipo.
+*   **Objeto:** Es una **instancia real** de una clase. Es la galleta hecha con el molde. Cada objeto tiene sus propios valores para las características definidas por la clase.
+
+**Ejemplo en JavaScript:**
+\`\`\`javascript
+class Coche {
+  constructor(marca, modelo, color) {
+    this.marca = marca;
+    this.modelo = modelo;
+    this.color = color;
+  }
+  mostrarInfo() {
+    console.log(\`Este es un \${this.color} \${this.marca} \${this.modelo}.\`);
+  }
+}
+const miCoche = new Coche("Toyota", "Corolla", "rojo");
+miCoche.mostrarInfo();
+\`\`\``
       },
       {
         title: 'Herencia en JavaScript',
         description: 'Cómo reutilizar código mediante herencia',
         difficulty: 'intermediate',
         topic: 'POO',
+        content: `¡Imagina que tienes una familia! Tú heredas características de tus padres, ¿verdad? En POO, la **Herencia** funciona de manera similar: una clase puede heredar características y acciones de otra clase.
+
+**Analogía Visual: Padres e Hijos**
+*   **Clase Padre (Superclase):** Es como el padre. Define características y acciones generales.
+*   **Clase Hija (Subclase):** Es como el hijo. Hereda todo del padre y, además, puede tener sus propias características y acciones especiales.
+
+**Ejemplo en JavaScript:**
+\`\`\`javascript
+class Vehiculo {
+  constructor(ruedas) { this.ruedas = ruedas; }
+  arrancar() { console.log("Arrancando..."); }
+}
+class Coche extends Vehiculo {
+  constructor(marca, ruedas) {
+    super(ruedas);
+    this.marca = marca;
+  }
+}
+const miCoche = new Coche("Tesla", 4);
+miCoche.arrancar();
+\`\`\``
       },
       {
-        title: 'Polimorfismo y Encapsulación',
-        description: 'Conceptos avanzados de POO',
+        title: 'Encapsulamiento',
+        description: 'Protegiendo la información de nuestros objetos',
         difficulty: 'intermediate',
         topic: 'POO',
+        content: `Imagina que tienes una caja fuerte. El **Encapsulamiento** se trata de **proteger la información** dentro de un objeto y controlar cómo se accede a ella.
+
+**Analogía Visual: Una Caja Fuerte**
+*   **Caja Fuerte (Objeto):** Contiene datos y métodos.
+*   **Contenido (Datos Privados):** Solo se puede acceder a ellos de forma controlada.
+
+**Ejemplo en JavaScript:**
+\`\`\`javascript
+class CuentaBancaria {
+  #saldo;
+  constructor(saldo) { this.#saldo = saldo; }
+  verSaldo() { return this.#saldo; }
+}
+const cuenta = new CuentaBancaria(100);
+console.log(cuenta.verSaldo());
+\`\`\``
       },
+      {
+        title: 'Polimorfismo',
+        description: 'Muchas formas de realizar una acción',
+        difficulty: 'advanced',
+        topic: 'POO',
+        content: `**Polimorfismo** significa "muchas formas". Es la capacidad de un método de comportarse de **diferentes maneras** según el objeto que lo llama.
+
+**Analogía Visual: Un Botón de "Reproducir"**
+El mismo botón reproduce música en un reproductor de audio y video en uno de cine. La acción cambia según el contexto.
+
+**Ejemplo en JavaScript:**
+\`\`\`javascript
+class Animal { hacerSonido() { console.log("Sonido..."); } }
+class Perro extends Animal { hacerSonido() { console.log("Guau!"); } }
+class Gato extends Animal { hacerSonido() { console.log("Miau!"); } }
+
+const animales = [new Perro(), new Gato()];
+animales.forEach(a => a.hacerSonido());
+\`\`\``
+      }
     ]
 
+    await Lesson.deleteMany({}) // Limpiar anteriores para el seed real
     await Lesson.insertMany(initialLessons)
     res.json({ message: 'Lecciones iniciales creadas con éxito' })
   } catch (error) {
