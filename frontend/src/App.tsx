@@ -2,6 +2,7 @@ import React from 'react'
 import { ChatProvider } from './context/ChatContext'
 import ChatInterface from './components/ChatInterface'
 import LessonsList from './components/LessonsList'
+import './services/auth' // Initialize axios interceptors
 
 function App() {
   const [view, setView] = React.useState<'home' | 'lessons' | 'chat'>('home')

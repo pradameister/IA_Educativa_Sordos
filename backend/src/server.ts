@@ -5,6 +5,8 @@ import { getAIResponse } from './openai'
 import { ChatMessage, ChatRequest, ChatResponse, LessonsResponse } from 'shared'
 import { connectDB } from './db'
 import Lesson from './models/Lesson'
+import authRoutes from './auth'
+import { authMiddleware } from './middleware'
 
 dotenv.config({ path: '.env.local' })
 
@@ -15,6 +17,9 @@ const PORT = process.env.PORT || 3000
 // Middleware
 app.use(cors())
 app.use(express.json())
+
+// Routes
+app.use('/api/auth', authRoutes)
 
 // Health check
 app.get('/api/health', (req: Request, res: Response) => {
@@ -73,8 +78,8 @@ app.post('/api/lessons/seed', async (req: Request, res: Response) => {
   }
 })
 
-// Chat endpoint with OpenAI
-app.post('/api/chat', async (req: Request, res: Response) => {
+// Chat endpoint with OpenAI (Protected)
+app.post('/api/chat', authMiddleware, async (req: Request, res: Response) => {
   try {
     const { message, history } = req.body as ChatRequest
 
