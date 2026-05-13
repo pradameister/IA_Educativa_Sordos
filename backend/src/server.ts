@@ -9,7 +9,15 @@ import User from './models/User'
 import authRoutes from './auth'
 import { authMiddleware, AuthRequest } from './middleware'
 
-dotenv.config({ path: '.env.local' })
+dotenv.config() // Cargar .env estándar para producción
+
+console.log('--- INICIANDO SERVIDOR ---');
+console.log('Variables de entorno cargadas:', {
+  PORT: process.env.PORT,
+  MONGO_URL: process.env.DATABASE_URL ? 'CONFIGURADA' : 'NO CONFIGURADA',
+  JWT_SECRET: process.env.JWT_SECRET ? 'CONFIGURADA' : 'NO CONFIGURADA',
+  OPENAI_KEY: process.env.OPENAI_API_KEY ? 'CONFIGURADA' : 'NO CONFIGURADA'
+});
 
 const app: Express = express()
 connectDB()
