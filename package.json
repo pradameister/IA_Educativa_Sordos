@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "dev": "concurrently \"yarn frontend dev\" \"yarn backend dev\"",
-    "build": "yarn frontend build && yarn backend build",
+    "build": "yarn shared build && yarn frontend build && yarn backend build",
     "lint": "yarn frontend lint && yarn backend lint"
   },
   "devDependencies": {

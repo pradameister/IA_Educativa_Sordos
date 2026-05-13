@@ -26,6 +26,8 @@ export interface Lesson {
   difficulty: Difficulty;
   topic: string;
   content?: string;
+  exercise?: string;
+  expectedCode?: string;
 }
 
 export interface LessonsResponse {

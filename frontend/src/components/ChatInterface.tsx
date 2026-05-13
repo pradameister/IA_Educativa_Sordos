@@ -22,7 +22,8 @@ const ChatInterface: React.FC = () => {
         history: messages,
       };
 
-      const response = await axios.post<ChatResponse>('http://localhost:3000/api/chat', payload);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const response = await axios.post<ChatResponse>(`${API_URL}/api/chat`, payload);
 
       addMessage({ role: 'assistant', content: response.data.response });
     } catch (error) {

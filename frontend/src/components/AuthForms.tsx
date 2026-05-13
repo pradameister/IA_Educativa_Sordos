@@ -23,7 +23,8 @@ const AuthForms: React.FC<AuthFormsProps> = ({ onLoginSuccess }) => {
 
     try {
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-      const response = await axios.post(`http://localhost:3000${endpoint}`, formData);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const response = await axios.post(`${API_URL}${endpoint}`, formData);
       
       authService.setToken(response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));

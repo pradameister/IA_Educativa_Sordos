@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-import { Lesson } from 'shared';
-import ReactMarkdown from 'react-markdown';
+// import { Lesson } from 'shared';
+// import ReactMarkdown from 'react-markdown';
 
 interface LessonViewerProps {
   lesson: any; // Usamos any temporalmente para acceder a campos nuevos como exercise

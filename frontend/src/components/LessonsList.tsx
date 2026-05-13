@@ -12,27 +12,24 @@ const LessonsList: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         const [lessonsRes, progressRes] = await Promise.all([
-          axios.get<LessonsResponse>('http://localhost:3000/api/lessons'),
-          axios.get('http://localhost:3000/api/user/progress').catch(() => ({ data: { progress: { completedLessons: [] } } }))
-        ]);
-        
+          axios.get<LessonsResponse>(`${API_URL}/api/lessons`),
+          axios.get(`${API_URL}/api/user/progress`).catch(() => ({ data: { progress: { completedLessons: [] } } }))
+        ]);       
         setLessons(lessonsRes.data.lessons);
         const completed = progressRes.data.progress.completedLessons.map((l: any) => typeof l === 'string' ? l : l.id || l._id);
         setCompletedIds(completed);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+           fetchData();
   }, []);
 
   const handleComplete = async (lessonId: string) => {
     try {
-      await axios.post(`http://localhost:3000/api/lessons/${lessonId}/complete`);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      await axios.post(`${API_URL}/api/lessons/${lessonId}/complete`);
       setCompletedIds(prev => [...prev, lessonId]);
     } catch (error) {
       console.error('Error completing lesson:', error);
