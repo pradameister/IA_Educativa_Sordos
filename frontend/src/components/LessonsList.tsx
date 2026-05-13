@@ -109,6 +109,7 @@ const LessonsList: React.FC = () => {
           </div>
         );
       })}
+      </div>
     </div>
   );
 };
