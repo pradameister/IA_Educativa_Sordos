@@ -26,7 +26,7 @@ const UserSchema: Schema = new Schema({
     transform: (_doc, ret) => {
       ret.id = ret._id.toString();
       delete (ret as any)._id;
-      delete (ret as any)..__v;
+      delete (ret as any)["__v"];
       delete (ret as any).password;
     }
   }
