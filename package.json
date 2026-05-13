@@ -9,9 +9,9 @@
     "shared"
   ],
   "scripts": {
-    "dev": "concurrently \"yarn frontend dev\" \"yarn backend dev\"",
-    "build": "yarn shared build && yarn backend build && yarn frontend build",
-    "lint": "yarn frontend lint && yarn backend lint"
+    "dev": "concurrently \"npm run dev -w frontend\" \"npm run dev -w backend\"",
+    "build": "npm run build -w shared && npm run build -w backend && npm run build -w frontend",
+    "lint": "npm run lint -w frontend && npm run lint -w backend"
   },
   "devDependencies": {
     "concurrently": "^8.0.0"
