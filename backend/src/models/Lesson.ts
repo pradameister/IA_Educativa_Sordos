@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { Lesson as ILesson } from 'shared';
-
+import { Lesson as ILesson } from '../types';
+ 
 export interface LessonDocument extends Omit<ILesson, 'id'>, Document {}
-
+ 
 const LessonSchema: Schema = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
@@ -25,5 +25,5 @@ const LessonSchema: Schema = new Schema({
     }
   }
 });
-
+ 
 export default mongoose.model<LessonDocument>('Lesson', LessonSchema);
