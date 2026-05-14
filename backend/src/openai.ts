@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI, Content } from '@google/generative-ai';
 import { ChatMessage } from 'shared';
 
+export { ChatMessage };
+
 // Usaremos la nueva variable de entorno de Railway
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -27,7 +29,7 @@ export async function getAIResponse(messages: ChatMessage[]) {
       systemInstruction: systemInstruction 
     });
 
-    // 3. Convertimos el historial de OpenAI/Shared al formato de Gemini
+    // 3. Convertimos el historial al formato de Gemini
     const history: Content[] = userMessages.map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }],
@@ -36,9 +38,8 @@ export async function getAIResponse(messages: ChatMessage[]) {
     // 4. Iniciamos el chat y enviamos el mensaje
     const chat = model.startChat({ history });
     const result = await chat.sendMessage(lastUserMessage);
-    const response = result.response;
     
-    return response.text();
+    return result.response.text();
 
   } catch (error: any) {
     console.error('❌ Error en Gemini API:', error);
