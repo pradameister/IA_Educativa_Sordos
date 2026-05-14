@@ -1,50 +1,47 @@
-import axios from 'axios'
+import { GoogleGenerativeAI, Content } from '@google/generative-ai';
+import { ChatMessage } from 'shared';
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY
-const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini'
+// Usaremos la nueva variable de entorno de Railway
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-if (!OPENAI_API_KEY) {
-  console.warn('OPENAI_API_KEY not set — OpenAI requests will fail')
+if (!GEMINI_API_KEY) {
+  console.warn('⚠️ GEMINI_API_KEY no configurada — Las peticiones fallarán');
 }
 
-import { ChatMessage } from 'shared'
-export { ChatMessage }
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || '');
 
 export async function getAIResponse(messages: ChatMessage[]) {
-  if (!OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY is not defined')
-  }
-
-  const payload = {
-    model: OPENAI_MODEL,
-    messages,
-    temperature: 0.2,
-    max_tokens: 800,
+  if (!GEMINI_API_KEY) {
+    throw new Error('GEMINI_API_KEY no está definida en Railway');
   }
 
   try {
-    const resp = await axios.post('https://api.openai.com/v1/chat/completions', payload, {
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      timeout: 60000,
-    })
+    // 1. Extraemos el mensaje del sistema (instrucciones) y el último mensaje del usuario
+    const systemInstruction = messages.find(m => m.role === 'system')?.content || '';
+    const userMessages = messages.filter(m => m.role !== 'system');
+    const lastUserMessage = userMessages.pop()?.content || '';
 
-    const data = resp.data
-    const text = data?.choices?.[0]?.message?.content
+    // 2. Configuramos el modelo con las instrucciones del sistema
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: systemInstruction 
+    });
+
+    // 3. Convertimos el historial de OpenAI/Shared al formato de Gemini
+    const history: Content[] = userMessages.map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }],
+    }));
+
+    // 4. Iniciamos el chat y enviamos el mensaje
+    const chat = model.startChat({ history });
+    const result = await chat.sendMessage(lastUserMessage);
+    const response = result.response;
     
-    if (!text) {
-      console.error('OpenAI response format error:', JSON.stringify(data))
-      throw new Error('Formato de respuesta de OpenAI no reconocido')
-    }
+    return response.text();
 
-    return String(text)
   } catch (error: any) {
-    if (error.response) {
-      console.error('OpenAI API Error:', error.response.status, error.response.data)
-      throw new Error(`Error de OpenAI: ${error.response.data?.error?.message || error.response.statusText}`)
-    }
-    throw error
+    console.error('❌ Error en Gemini API:', error);
+    throw new Error(`Error de Gemini: ${error.message || 'Error desconocido'}`);
   }
 }
