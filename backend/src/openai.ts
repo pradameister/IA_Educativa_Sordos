@@ -25,7 +25,7 @@ export async function getAIResponse(messages: ChatMessage[]) {
 
     // 2. Configuramos el modelo con las instrucciones del sistema
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash-latest",
+     model: "gemini-1.5-flash",
       systemInstruction: systemInstruction 
     });
 
