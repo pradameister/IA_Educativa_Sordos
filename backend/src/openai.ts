@@ -1,15 +1,9 @@
-import { GoogleGenerativeAI, Content } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ChatMessage } from 'shared';
 
 export { ChatMessage };
 
-// Usaremos la nueva variable de entorno de Railway
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-if (!GEMINI_API_KEY) {
-  console.warn('⚠️ GEMINI_API_KEY no configurada — Las peticiones fallarán');
-}
-
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || '');
 
 export async function getAIResponse(messages: ChatMessage[]) {
@@ -18,31 +12,33 @@ export async function getAIResponse(messages: ChatMessage[]) {
   }
 
   try {
-    // 1. Extraemos el mensaje del sistema (instrucciones) y el último mensaje del usuario
-    const systemInstruction = messages.find(m => m.role === 'system')?.content || '';
+    // 1. Extraemos las instrucciones y los mensajes
+    const systemInstruction = messages.find(m => m.role === 'system')?.content || 'Eres un profesor de POO.';
     const userMessages = messages.filter(m => m.role !== 'system');
     const lastUserMessage = userMessages.pop()?.content || '';
 
-    // 2. Configuramos el modelo con las instrucciones del sistema
-    const model = genAI.getGenerativeModel({ 
-     model: "gemini-1.5-pro", // Prueba con el "Pro" en lugar del "Flash"
-      systemInstruction: systemInstruction 
+    // 2. Usamos el nombre de modelo más básico y compatible
+    // Si este falla, cambia "gemini-1.5-flash" por "gemini-pro"
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    // 3. PASO CLAVE: Iniciamos el chat con las instrucciones como si fueran el primer mensaje
+    // Esto es compatible con absolutamente todas las versiones de la API
+    const chat = model.startChat({
+      history: [
+        { role: "user", parts: [{ text: `Instrucción importante: ${systemInstruction}` }] },
+        { role: "model", parts: [{ text: "Entendido. Hola, soy tu profesor virtual de Programación Orientada a Objetos. ¿En qué puedo ayudarte hoy?" }] },
+        ...userMessages.map(m => ({
+          role: m.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: m.content }],
+        })),
+      ],
     });
 
-    // 3. Convertimos el historial al formato de Gemini
-    const history: Content[] = userMessages.map(m => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }],
-    }));
-
-    // 4. Iniciamos el chat y enviamos el mensaje
-    const chat = model.startChat({ history });
     const result = await chat.sendMessage(lastUserMessage);
-    
     return result.response.text();
 
   } catch (error: any) {
-    console.error('❌ Error en Gemini API:', error);
+    console.error('❌ Error detallado en Gemini API:', error);
     throw new Error(`Error de Gemini: ${error.message || 'Error desconocido'}`);
   }
 }
