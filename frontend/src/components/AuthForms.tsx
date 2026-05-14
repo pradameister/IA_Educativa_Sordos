@@ -22,8 +22,8 @@ const AuthForms: React.FC<AuthFormsProps> = ({ onLoginSuccess }) => {
     setLoading(true);
 
     try {
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const endpoint = isLogin ? '/auth/login' : '/auth/register';
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
       const response = await axios.post(`${API_URL}${endpoint}`, formData);
       
       authService.setToken(response.data.token);
@@ -116,3 +116,4 @@ const AuthForms: React.FC<AuthFormsProps> = ({ onLoginSuccess }) => {
 };
 
 export default AuthForms;
+
