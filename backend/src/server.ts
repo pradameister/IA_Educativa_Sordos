@@ -16,7 +16,7 @@ console.log('Variables de entorno cargadas:', {
   PORT: process.env.PORT,
   MONGO_URL: process.env.DATABASE_URL ? 'CONFIGURADA' : 'NO CONFIGURADA',
   JWT_SECRET: process.env.JWT_SECRET ? 'CONFIGURADA' : 'NO CONFIGURADA',
-  OPENAI_KEY: process.env.OPENAI_API_KEY ? 'CONFIGURADA' : 'NO CONFIGURADA'
+  GEMINI_KEY: process.env.GEMINI_API_KEY ? 'CONFIGURADA' : 'NO CONFIGURADA' // Cambiado aquí
 });
 
 const app: Express = express()
