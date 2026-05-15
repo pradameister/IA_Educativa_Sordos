@@ -12,6 +12,19 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(authService.isAuthenticated())
   const [user, setUser] = useState<any>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode')
+    return saved ? JSON.parse(saved) : false
+  })
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+    localStorage.setItem('darkMode', JSON.stringify(darkMode))
+  }, [darkMode])
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -35,9 +48,9 @@ function App() {
 
   return (
     <ChatProvider>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-indigo-950 flex flex-col transition-colors duration-300">
         {/* Navbar Responsivo */}
-        <nav className="bg-white shadow-md sticky top-0 z-50">
+        <nav className="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50 border-b dark:border-gray-800">
           <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center cursor-pointer" onClick={() => navigate('home')}>
@@ -65,8 +78,16 @@ function App() {
                 <button onClick={() => navigate('home')} className={`px-3 py-2 rounded-md text-sm font-medium ${view === 'home' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>Inicio</button>
                 <button onClick={() => navigate('lessons')} className={`px-3 py-2 rounded-md text-sm font-medium ${view === 'lessons' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>Lecciones</button>
                 <button onClick={() => navigate('chat')} className={`px-3 py-2 rounded-md text-sm font-medium ${view === 'chat' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>Chat</button>
-                <button onClick={() => navigate('glossary')} className={`px-3 py-2 rounded-md text-sm font-medium ${view === 'glossary' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>Glosario</button>
+                <button onClick={() => navigate('glossary')} className={`px-3 py-2 rounded-md text-sm font-medium ${view === 'glossary' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'}`}>Glosario</button>
                 
+                <button 
+                  onClick={() => setDarkMode(!darkMode)}
+                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-yellow-400"
+                  title="Cambiar Modo"
+                >
+                  {darkMode ? '☀️' : '🌙'}
+                </button>
+
                 {isAuthenticated ? (
                   <div className="flex items-center gap-4 ml-4 border-l pl-4">
                     <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{user?.username}</span>
@@ -105,11 +126,11 @@ function App() {
               !isAuthenticated ? (
                 <AuthForms onLoginSuccess={() => setIsAuthenticated(true)} />
               ) : (
-                <div className="bg-white rounded-2xl shadow-xl p-6 md:p-12 border border-gray-100">
-                  <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
-                    ¡Bienvenido a tu <span className="text-indigo-600">Futuro Digital</span>! ♿
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 md:p-12 border border-gray-100 dark:border-gray-700">
+                  <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
+                    ¡Bienvenido a tu <span className="text-indigo-600 dark:text-indigo-400">Futuro Digital</span>! ♿
                   </h2>
-                  <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl">
+                  <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-2xl">
                     Aprende programación orientada a objetos con un profesor IA diseñado para ser 100% visual y accesible.
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

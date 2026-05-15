@@ -52,12 +52,12 @@ const Glossary: React.FC = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div className="bg-white p-8 rounded-xl shadow-lg border-t-4 border-purple-500">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+    <div className="max-w-4xl mx-auto space-y-8 animate-fadeIn">
+      <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg border-t-4 border-purple-500">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
           📖 Glosario de Señas POO
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
           Aprende los conceptos clave de la Programación Orientada a Objetos con explicaciones sencillas y apoyo visual en Lengua de Señas.
         </p>
         
@@ -65,7 +65,7 @@ const Glossary: React.FC = () => {
           <input 
             type="text"
             placeholder="Buscar término (ej. Herencia)..."
-            className="w-full px-4 py-3 border-2 border-purple-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+            className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-purple-100 dark:border-purple-900/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 dark:text-white transition-all"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -74,8 +74,8 @@ const Glossary: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredTerms.map((t, index) => (
-          <div key={index} className="bg-white rounded-xl shadow-md overflow-hidden flex hover:shadow-xl transition-shadow border border-purple-50">
-            <div className="w-1/3 bg-purple-100 flex items-center justify-center p-4 text-5xl">
+          <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden flex hover:shadow-xl transition-all border border-purple-50 dark:border-gray-700 group">
+            <div className="w-1/3 bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center p-4 text-5xl group-hover:scale-110 transition-transform">
               {t.signImage?.startsWith('http') ? (
                 <img 
                   src={t.signImage} 
@@ -87,8 +87,8 @@ const Glossary: React.FC = () => {
               )}
             </div>
             <div className="w-2/3 p-4">
-              <h3 className="text-xl font-bold text-purple-700 mb-2">{t.term}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <h3 className="text-xl font-bold text-purple-700 dark:text-purple-400 mb-2">{t.term}</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                 {t.definition}
               </p>
             </div>
@@ -97,7 +97,7 @@ const Glossary: React.FC = () => {
       </div>
 
       {filteredTerms.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
           No se encontraron términos que coincidan con tu búsqueda.
         </div>
       )}

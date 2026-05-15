@@ -46,9 +46,9 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-180px)] md:h-[650px] bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+    <div className="flex flex-col h-[calc(100vh-180px)] md:h-[650px] bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
       {/* Header del Chat */}
-      <div className="bg-indigo-600 p-4 text-white flex justify-between items-center shrink-0 shadow-md">
+      <div className="bg-indigo-600 dark:bg-indigo-700 p-4 text-white flex justify-between items-center shrink-0 shadow-md">
         <div className="flex items-center gap-3">
           <div className="bg-white/20 p-2 rounded-lg text-xl">🤖</div>
           <div>
@@ -65,12 +65,12 @@ const ChatInterface: React.FC = () => {
       </div>
 
       {/* Área de Mensajes */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-gray-50/50">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-gray-50/50 dark:bg-gray-950/50">
         {messages.length === 0 && !isLoading && (
           <div className="h-full flex flex-col items-center justify-center text-center p-8">
             <div className="text-5xl mb-4 animate-bounce">👋</div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">¡Hola! Soy tu Profesor IA</h3>
-            <p className="text-gray-500 max-w-xs">¿Tienes alguna duda sobre clases, objetos o herencia? ¡Pregúntame lo que quieras!</p>
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">¡Hola! Soy tu Profesor IA</h3>
+            <p className="text-gray-500 dark:text-gray-400 max-w-xs">¿Tienes alguna duda sobre clases, objetos o herencia? ¡Pregúntame lo que quieras!</p>
           </div>
         )}
         
@@ -82,11 +82,11 @@ const ChatInterface: React.FC = () => {
             <div
               className={`max-w-[90%] md:max-w-[80%] p-4 rounded-2xl shadow-sm ${
                 msg.role === 'user'
-                  ? 'bg-indigo-600 text-white rounded-tr-none'
-                  : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
+                  ? 'bg-indigo-600 dark:bg-indigo-700 text-white rounded-tr-none'
+                  : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-tl-none border border-gray-100 dark:border-gray-700'
               }`}
             >
-              <div className={`prose prose-sm max-w-none ${msg.role === 'user' ? 'prose-invert' : 'prose-p:leading-relaxed'}`}>
+              <div className={`prose prose-sm max-w-none ${msg.role === 'user' ? 'prose-invert' : 'dark:prose-invert prose-p:leading-relaxed'}`}>
                 <ReactMarkdown>{msg.content}</ReactMarkdown>
               </div>
             </div>
@@ -95,7 +95,7 @@ const ChatInterface: React.FC = () => {
         
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-white p-4 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl rounded-tl-none border border-gray-100 dark:border-gray-700 shadow-sm">
               <div className="flex gap-1.5">
                 <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
                 <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
@@ -108,7 +108,7 @@ const ChatInterface: React.FC = () => {
       </div>
 
       {/* Input de Mensajes */}
-      <div className="p-3 md:p-4 bg-white border-t border-gray-100 shrink-0">
+      <div className="p-3 md:p-4 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 shrink-0">
         <div className="flex gap-2">
           <input
             type="text"
@@ -116,7 +116,7 @@ const ChatInterface: React.FC = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Escribe tu duda..."
-            className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm md:text-base"
+            className="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all text-sm md:text-base"
             disabled={isLoading}
           />
           <button
