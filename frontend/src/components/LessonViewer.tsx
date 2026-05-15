@@ -21,12 +21,11 @@ const LessonViewer: React.FC<LessonViewerProps> = ({ lesson, onBack, onComplete,
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await axios.post(`${API_URL}/api/chat`, {
-        message: `Actúa como un profesor de programación para personas sordas. Evalúa el siguiente ejercicio de la lección "${lesson.title}". 
+      // Usamos el nuevo endpoint /api/evaluate para no ensuciar el historial del chat
+      const response = await axios.post(`${API_URL}/api/evaluate`, {
+        message: `Lección: "${lesson.title}". 
         Reto: ${lesson.exercise}
-        Código/Respuesta del alumno: ${userCode}
-        
-        Responde de forma muy visual, sencilla y motivadora. Si es correcto, di "¡Excelente trabajo!". Si hay errores, explica cómo corregirlos usando analogías sencillas.`
+        Respuesta del alumno: ${userCode}`
       });
 
       const aiResponse = response.data.response;

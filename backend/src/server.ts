@@ -139,6 +139,22 @@ const chatHandler = async (req: AuthRequest, res: Response) => {
 app.post('/api/chat', authMiddleware, chatHandler);
 app.post('/chat', authMiddleware, chatHandler);
 
+// Evaluación de Retos (NO guarda en historial)
+const evaluateHandler = async (req: AuthRequest, res: Response) => {
+  try {
+    const { message } = req.body;
+    const aiResponse = await getAIResponse([
+      { role: 'system', content: 'Eres un profesor experto en POO para personas sordas. Evalúa ejercicios de forma motivadora y visual.' },
+      { role: 'user', content: message }
+    ]);
+    res.json({ response: aiResponse });
+  } catch (error: any) {
+    res.status(500).json({ error: 'Error evaluación' });
+  }
+};
+app.post('/api/evaluate', authMiddleware, evaluateHandler);
+app.post('/evaluate', authMiddleware, evaluateHandler);
+
 // Salud
 app.get('/health', (req, res) => res.json({ status: 'OK' }));
 app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
