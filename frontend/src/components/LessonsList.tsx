@@ -20,9 +20,9 @@ const LessonsList: React.FC = () => {
         ]);
         
         setLessons(lessonsRes.data.lessons);
-        const completed = progressRes.data.progress.completedLessons.map((l: any) => 
-          typeof l === 'string' ? l : l.id || l._id
-        );
+        const completed = progressRes.data.progress?.completedLessons?.map((l: any) => 
+          typeof l === 'string' ? l : l._id || l.id
+        ) || [];
         setCompletedIds(completed);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -46,12 +46,13 @@ const LessonsList: React.FC = () => {
   if (loading) return <div className="text-center py-10">Cargando lecciones...</div>;
 
   if (selectedLesson) {
+    const lessonId = (selectedLesson as any)._id || (selectedLesson as any).id;
     return (
       <LessonViewer 
         lesson={selectedLesson} 
         onBack={() => setSelectedLesson(null)} 
         onComplete={handleComplete}
-        isCompleted={completedIds.includes(selectedLesson.id.toString())}
+        isCompleted={completedIds.includes(lessonId.toString())}
       />
     );
   }
@@ -79,9 +80,10 @@ const LessonsList: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {lessons.map((lesson: any) => {
-          const isCompleted = completedIds.includes(lesson.id.toString());
+          const lessonId = lesson._id || lesson.id;
+          const isCompleted = completedIds.includes(lessonId.toString());
           return (
-            <div key={lesson.id} className={`bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 ${isCompleted ? 'border-green-500' : 'border-indigo-500'}`}>
+            <div key={lessonId} className={`bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 ${isCompleted ? 'border-green-500' : 'border-indigo-500'}`}>
               <div className="flex justify-between items-start mb-2">
                 <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                   {lesson.title}
@@ -103,7 +105,7 @@ const LessonsList: React.FC = () => {
                 </button>
                 {!isCompleted && (
                   <button 
-                    onClick={() => handleComplete(lesson.id.toString())}
+                    onClick={() => handleComplete(lessonId.toString())}
                     className="text-xs bg-gray-100 hover:bg-green-100 text-gray-600 hover:text-green-700 px-3 py-1 rounded transition-colors"
                   >
                     Marcar como completada
