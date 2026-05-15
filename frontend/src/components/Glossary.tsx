@@ -10,39 +10,50 @@ const terms: GlossaryTerm[] = [
   {
     term: 'Clase',
     definition: 'Es como un molde o plantilla para crear objetos. Define qué características y acciones tendrán.',
-    signImage: '🏗️'
+    signImage: '/assets/signs/clase.gif' // Intentará cargar el GIF, si no existe mostrará el icono por defecto
   },
   {
     term: 'Objeto',
     definition: 'Es una cosa real creada a partir de una clase. Por ejemplo, si la clase es "Coche", el objeto es tu coche rojo.',
-    signImage: '🚗'
+    signImage: '/assets/signs/objeto.gif'
   },
   {
     term: 'Herencia',
     definition: 'Es cuando una clase hija recibe las características y acciones de una clase padre.',
-    signImage: '👪'
+    signImage: '/assets/signs/herencia.gif'
   },
   {
     term: 'Encapsulamiento',
     definition: 'Es proteger la información dentro de un objeto para que no se cambie por error. Como una caja fuerte.',
-    signImage: '🔒'
+    signImage: '/assets/signs/encapsulamiento.gif'
   },
   {
     term: 'Polimorfismo',
     definition: 'Es cuando una misma acción (como "reproducir") se comporta diferente según quién la haga.',
-    signImage: '🎭'
+    signImage: '/assets/signs/polimorfismo.gif'
   },
   {
     term: 'Método',
     definition: 'Es una acción que un objeto puede realizar. Por ejemplo: acelerar, frenar, saludar.',
-    signImage: '⚙️'
+    signImage: '/assets/signs/metodo.gif'
   },
   {
     term: 'Propiedad',
     definition: 'Es una característica de un objeto. Por ejemplo: color, marca, nombre, edad.',
-    signImage: '📋'
+    signImage: '/assets/signs/propiedad.gif'
   }
 ];
+
+// Mapeo de iconos de respaldo si no hay imagen
+const fallbackIcons: Record<string, string> = {
+  'Clase': '🏗️',
+  'Objeto': '🚗',
+  'Herencia': '👪',
+  'Encapsulamiento': '🔒',
+  'Polimorfismo': '🎭',
+  'Método': '⚙️',
+  'Propiedad': '📋'
+};
 
 const Glossary: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -75,16 +86,23 @@ const Glossary: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredTerms.map((t, index) => (
           <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden flex hover:shadow-xl transition-all border border-purple-50 dark:border-gray-700 group">
-            <div className="w-1/3 bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center p-4 text-5xl group-hover:scale-110 transition-transform">
-              {t.signImage?.startsWith('http') ? (
-                <img 
-                  src={t.signImage} 
-                  alt={`Seña para ${t.term}`} 
-                  className="rounded-lg object-cover h-32 w-full"
-                />
-              ) : (
-                <span>{t.signImage}</span>
-              )}
+            <div className="w-1/3 bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center p-2 text-5xl group-hover:scale-110 transition-transform min-h-[120px]">
+              <img 
+                src={t.signImage} 
+                alt={`Seña para ${t.term}`} 
+                className="rounded-lg object-contain h-full w-full"
+                onError={(e) => {
+                  // Si la imagen falla, ponemos el emoji de respaldo
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const parent = target.parentElement;
+                  if (parent) {
+                    const span = document.createElement('span');
+                    span.innerText = fallbackIcons[t.term] || '📖';
+                    parent.appendChild(span);
+                  }
+                }}
+              />
             </div>
             <div className="w-2/3 p-4">
               <h3 className="text-xl font-bold text-purple-700 dark:text-purple-400 mb-2">{t.term}</h3>
