@@ -12,21 +12,19 @@ import { authMiddleware, AuthRequest } from './middleware'
 
 dotenv.config()
 
-console.log('--- INICIANDO SERVIDOR ---');
-
 const app: Express = express()
 const PORT = process.env.PORT || 3000
 
-// Middlewares globales
+// 1. Middlewares globales (Deben ir primero)
 app.use(cors())
 app.use(express.json())
 
-// Conectar a la base de datos y realizar seed automático
+// 2. Conexión y Seed
 connectDB().then(async () => {
   try {
     const count = await Lesson.countDocuments();
     if (count === 0) {
-      console.log('🌱 Base de datos vacía. Ejecutando seed de lecciones...');
+      console.log('🌱 Seed automático de lecciones...');
       const initialLessons = [
         {
           title: 'Introducción a la Programación Orientada a Objetos',
@@ -78,117 +76,38 @@ miCoche.mostrarInfo();
 \`\`\``,
           exercise: 'Crea una clase llamada "Persona" que tenga un constructor con "nombre" y "edad". Luego crea un objeto llamado "estudiante" con tu nombre.',
           expectedCode: 'class Persona, constructor, new Persona'
-        },
-        {
-          title: 'Herencia en JavaScript',
-          description: 'Cómo reutilizar código mediante herencia',
-          difficulty: 'intermediate',
-          topic: 'POO',
-          content: `¡Imagina que tienes una familia! Tú heredas características de tus padres, ¿verdad? En POO, la **Herencia** funciona de manera similar: una clase puede heredar características y acciones de otra clase.
-
-**Analogía Visual: Padres e Hijos**
-*   **Clase Padre (Superclase):** Es como el padre. Define características y acciones generales.
-*   **Clase Hija (Subclase):** Es como el hijo. Hereda todo del padre y, además, puede tener sus propias características y acciones especiales.
-
-**Ejemplo en JavaScript:**
-\`\`\`javascript
-class Vehiculo {
-  constructor(ruedas) { this.ruedas = ruedas; }
-  arrancar() { console.log("Arrancando..."); }
-}
-class Coche extends Vehiculo {
-  constructor(marca, ruedas) {
-    super(ruedas);
-    this.marca = marca;
-  }
-}
-const miCoche = new Coche("Tesla", 4);
-miCoche.arrancar();
-\`\`\``
-        },
-        {
-          title: 'Encapsulamiento',
-          description: 'Protegiendo la información de nuestros objetos',
-          difficulty: 'intermediate',
-          topic: 'POO',
-          content: `Imagina que tienes una caja fuerte. El **Encapsulamiento** se trata de **proteger la información** dentro de un objeto y controlar cómo se accede a ella.
-
-**Analogía Visual: Una Caja Fuerte**
-*   **Caja Fuerte (Objeto):** Contiene datos y métodos.
-*   **Contenido (Datos Privados):** Solo se puede acceder a ellos de forma controlada.
-
-**Ejemplo en JavaScript:**
-\`\`\`javascript
-class CuentaBancaria {
-  #saldo;
-  constructor(saldo) { this.#saldo = saldo; }
-  verSaldo() { return this.#saldo; }
-}
-const cuenta = new CuentaBancaria(100);
-console.log(cuenta.verSaldo());
-\`\`\``
-        },
-        {
-          title: 'Polimorfismo',
-          description: 'Muchas formas de realizar una acción',
-          difficulty: 'advanced',
-          topic: 'POO',
-          content: `**Polimorfismo** significa "muchas formas". Es la capacidad de un método de comportarse de **diferentes maneras** según el objeto que lo llama.
-
-**Analogía Visual: Un Botón de "Reproducir"**
-El mismo botón reproduce música en un reproductor de audio y video en uno de cine. La acción cambia según el contexto.
-
-**Ejemplo en JavaScript:**
-\`\`\`javascript
-class Animal { hacerSonido() { console.log("Sonido..."); } }
-class Perro extends Animal { hacerSonido() { console.log("Guau!"); } }
-class Gato extends Animal { hacerSonido() { console.log("Miau!"); } }
-
-const animales = [new Perro(), new Gato()];
-animales.forEach(a => a.hacerSonido());
-\`\`\``
         }
       ];
       await Lesson.insertMany(initialLessons);
-      console.log('✅ Lecciones iniciales creadas con éxito');
+      console.log('✅ Seed completado');
     }
   } catch (error) {
-    console.error('❌ Error al realizar el seed automático:', error);
+    console.error('❌ Error seed:', error);
   }
 });
 
-// --- RUTAS DE LA API ---
+// 3. Definición de Rutas (Orden crítico)
 
-// Autenticación
+// Rutas de Autenticación
 app.use('/api/auth', authRoutes)
 
-// Salud
-app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: 'OK', message: 'Servidor funcionando correctamente' })
-})
-
-// --- HISTORIAL DE CHAT ---
-
-// Obtener historial de chat del usuario (Protegido)
+// Rutas de Historial de Chat (Protegido)
 app.get('/api/chat/history', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const messages = await Message.find({ user: req.userId })
-      .sort({ createdAt: 1 })
-      .limit(50); // Limitamos a los últimos 50 mensajes por rendimiento
-    
+    const messages = await Message.find({ user: req.userId }).sort({ createdAt: 1 }).limit(50);
     res.json({ history: messages });
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener el historial de chat' });
+    res.status(500).json({ error: 'Error historial' });
   }
 });
 
-// Lecciones
+// Rutas de Lecciones
 app.get('/api/lessons', async (req: Request, res: Response) => {
   try {
     const lessons = await Lesson.find()
     res.json({ lessons })
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener las lecciones' })
+    res.status(500).json({ error: 'Error lecciones' })
   }
 })
 
@@ -196,83 +115,64 @@ app.get('/api/lessons', async (req: Request, res: Response) => {
 app.post('/api/chat', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { message, history } = req.body as ChatRequest
-
-    if (!message || typeof message !== 'string' || message.trim().length === 0) {
-      return res.status(400).json({ error: 'Message is required' })
-    }
+    if (!message) return res.status(400).json({ error: 'Message required' })
 
     const systemPrompt: ChatMessage = {
       role: 'system',
-      content: `Eres un profesor virtual de Programación Orientada a Objetos (POO) para personas sordas.
-Tu estilo de comunicación debe ser:
-1. **Visual y Estructurado**: Usa muchos saltos de línea, negritas y listas.
-2. **Lenguaje Claro**: Frases cortas y directas. Evita párrafos largos.
-3. **Código Limpio**: Cuando pongas código, explica brevemente qué hace cada parte.
-4. **Interactivo**: Haz una pregunta a la vez para no abrumar.
-
-REGLAS DE FORMATO:
-- Usa siempre Markdown.
-- Usa encabezados (###) para separar secciones.
-- Los bloques de código deben estar claramente delimitados con \`\`\`javascript.
-- Si el usuario se sale del tema de POO, invítalo amablemente a volver a la lección.`,
+      content: `Eres un profesor virtual de POO para personas sordas. Usa Markdown, frases cortas y muchos saltos de línea.`,
     }
 
     const messages: ChatMessage[] = [
       systemPrompt,
-      ...(history && Array.isArray(history)
-        ? history.map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
-        : []),
+      ...(history && Array.isArray(history) ? history.map(m => ({ role: m.role as any, content: m.content })) : []),
       { role: 'user', content: message.trim() },
     ]
 
     const aiResponse = await getAIResponse(messages)
 
-    // Guardar la interacción en la base de datos de forma asíncrona
-    Promise.all([
-      Message.create({ user: req.userId, role: 'user', content: message.trim() }),
-      Message.create({ user: req.userId, role: 'assistant', content: aiResponse })
-    ]).catch(err => console.error('Error al guardar mensajes en DB:', err));
+    // Guardar en DB
+    Message.create([
+      { user: req.userId, role: 'user', content: message.trim() },
+      { user: req.userId, role: 'assistant', content: aiResponse }
+    ]).catch(e => console.error('Error saving msg:', e));
 
     res.json({ response: aiResponse })
   } catch (error: any) {
-    console.error('❌ Chat error:', error.message)
-    res.status(500).json({ error: 'Error al procesar tu mensaje.', details: error.message })
+    res.status(500).json({ error: 'Error chat', details: error.message })
   }
 })
 
-// Completar lección (Protegido)
+// Progreso y Completado
 app.post('/api/lessons/:id/complete', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const lessonId = req.params.id;
     const user = await User.findById(req.userId);
-    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
-
-    if (!user.progress.completedLessons.includes(lessonId as any)) {
-      user.progress.completedLessons.push(lessonId as any);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (!user.progress.completedLessons.includes(req.params.id as any)) {
+      user.progress.completedLessons.push(req.params.id as any);
       await user.save();
     }
-    res.json({ message: 'Lección marcada como completada', progress: user.progress });
+    res.json({ message: 'OK', progress: user.progress });
   } catch (error) {
-    res.status(500).json({ error: 'Error al actualizar el progreso' });
+    res.status(500).json({ error: 'Error progress' });
   }
 });
 
-// Progreso del usuario (Protegido)
 app.get('/api/user/progress', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const user = await User.findById(req.userId).populate('progress.completedLessons');
-    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
-    res.json({ progress: user.progress });
+    res.json({ progress: user?.progress });
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener el progreso' });
+    res.status(500).json({ error: 'Error progress fetch' });
   }
 });
 
-// Manejo de rutas no encontradas (DEBE IR AL FINAL)
-app.use((req: Request, res: Response) => {
+// Salud
+app.get('/api/health', (req, res) => res.json({ status: 'OK' }))
+
+// 4. Manejador 404 (SIEMPRE AL FINAL)
+app.use((req, res) => {
+  console.log(`404 en ruta: ${req.method} ${req.url}`);
   res.status(404).json({ error: 'Ruta no encontrada' })
 })
 
-app.listen(PORT, () => {
-  console.log(`✅ Servidor corriendo en el puerto ${PORT}`)
-})
+app.listen(PORT, () => console.log(`🚀 Servidor en puerto ${PORT}`))
