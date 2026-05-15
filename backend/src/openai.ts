@@ -1,36 +1,29 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import OpenAI from 'openai';
 import { ChatMessage } from 'shared';
 
 export { ChatMessage };
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || '');
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const openai = new OpenAI({
+  apiKey: OPENAI_API_KEY || '',
+});
 
 export async function getAIResponse(messages: ChatMessage[]) {
-  if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY no definida');
+  if (!OPENAI_API_KEY) throw new Error('OPENAI_API_KEY no definida');
 
   try {
-    const systemPrompt = messages.find(m => m.role === 'system')?.content || 'Eres un profesor de POO.';
-    const userMessages = messages.filter(m => m.role !== 'system');
-    const lastUserMessage = userMessages.pop()?.content || 'Hola';
-
-    // Usaremos "gemini-pro", que es el modelo más compatible del mundo
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-    const chat = model.startChat({
-      history: [
-        { role: "user", parts: [{ text: systemPrompt }] },
-        { role: "model", parts: [{ text: "Entendido, profesor listo." }] },
-        ...userMessages.map(m => ({
-          role: m.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: m.content }],
-        })),
-      ],
+    const response = await openai.chat.completions.create({
+      model: "gpt-4-turbo-preview", // O el modelo que prefieras, ej: gpt-3.5-turbo
+      messages: messages.map(m => ({
+        role: m.role as 'system' | 'user' | 'assistant',
+        content: m.content
+      })),
+      temperature: 0.7,
     });
 
-    const result = await chat.sendMessage(lastUserMessage);
-    return result.response.text();
+    return response.choices[0].message.content || 'Sin respuesta de la IA';
   } catch (error: any) {
-    throw new Error(`Error de Gemini: ${error.message}`);
+    throw new Error(`Error de OpenAI: ${error.message}`);
   }
 }
