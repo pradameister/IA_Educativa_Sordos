@@ -10,9 +10,18 @@
 
 body {
   margin: 0;
-  display: flex;
-  place-content: center;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #f3f4f6;
+  background-color: #f8fafc;
+  transition: background-color 0.3s ease;
+}
+
+html.dark body {
+  background-color: #0f172a; /* bg-gray-900 */
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
