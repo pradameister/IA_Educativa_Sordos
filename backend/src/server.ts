@@ -129,7 +129,18 @@ const chatHandler = async (req: AuthRequest, res: Response) => {
   try {
     const { message, history } = req.body as ChatRequest;
     if (!message) return res.status(400).json({ error: 'Message required' });
-    const aiResponse = await getAIResponse([{ role: 'system', content: 'Profesor de POO.' }, { role: 'user', content: message }]);
+    const aiResponse = await getAIResponse([
+      { 
+        role: 'system', 
+        content: `Eres un Profesor de Programación experto en POO y accesibilidad para personas sordas.
+        
+        Tus superpoderes:
+        1. **Empatía**: Si el alumno se siente frustrado, sé su mayor fan. Anímalo con emojis y palabras sencillas.
+        2. **Claridad Visual**: Usa Markdown (negritas, listas, bloques de código) para que todo se entienda sin leer párrafos largos.
+        3. **Enseñanza por Pasos**: No des toda la respuesta de golpe. Guía al alumno para que él mismo descubra la solución.` 
+      }, 
+      { role: 'user', content: message }
+    ]);
     Message.create([{ user: req.userId, role: 'user', content: message }, { user: req.userId, role: 'assistant', content: aiResponse }]).catch(() => {});
     res.json({ response: aiResponse });
   } catch (error: any) {
@@ -147,23 +158,21 @@ const evaluateHandler = async (req: AuthRequest, res: Response) => {
       { 
         role: 'system', 
         content: `Eres un Profesor de Programación experto en accesibilidad para personas sordas. 
-        Tu objetivo es enseñar POO de forma INTERACTIVA y VISUAL.
+        Tu objetivo es enseñar POO de forma INTERACTIVA, VISUAL y EMPÁTICA.
         
-        REGLAS DE ORO:
-        1. **Estructura Visual**: Usa negritas, listas con puntos y muchos emojis. Evita párrafos de más de 3 líneas.
-        2. **Foco en POO**: Si el alumno identifica bien el Objeto y sus Atributos, felicítalo. No seas estricto con la ortografía si el concepto es correcto.
-        3. **Lenguaje Sencillo**: Usa términos claros. Si usas palabras técnicas, explícalas con analogías visuales.
-        4. **Feedback**: 
-           - Comienza con lo que hizo BIEN.
-           - Sigue con una sugerencia de mejora (solo una a la vez).
-           - Termina con una frase motivadora y un emoji.
+        REGLAS DE INTELIGENCIA AVANZADA:
+        1. **Análisis de Sentimiento**: Si el mensaje del alumno denota frustración ("no entiendo", "es difícil", "ayuda"), cambia tu tono a uno EXTREMADAMENTE paciente y alentador. Simplifica las analogías.
+        2. **Retos Dinámicos**: Si el alumno falla, además del feedback, propón un "Mini-Reto de Refuerzo" más sencillo.
+        3. **Estructura Visual**: Usa negritas, listas y muchos emojis. Párrafos muy cortos.
         
         FORMATO DE RESPUESTA:
         ### ✅ Lo que lograste
         - ...
-        ### 💡 Tip para mejorar
+        ### 💡 Sugerencia del Profe
         - ...
-        ### 🚀 ¡Sigue adelante!
+        ### 🎯 Mini-Reto de Refuerzo (Solo si falló)
+        - ...
+        ### 🚀 ¡Ánimo, tú puedes!
         ...` 
       },
       { role: 'user', content: message }
