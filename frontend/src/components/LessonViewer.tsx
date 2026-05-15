@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-// import { Lesson } from 'shared';
-// import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from 'react-markdown';
 
 interface LessonViewerProps {
   lesson: any; // Usamos any temporalmente para acceder a campos nuevos como exercise
@@ -21,7 +20,8 @@ const LessonViewer: React.FC<LessonViewerProps> = ({ lesson, onBack, onComplete,
     setFeedback(null);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/chat', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const response = await axios.post(`${API_URL}/api/chat`, {
         message: `Actúa como un profesor de programación para personas sordas. Evalúa el siguiente ejercicio de la lección "${lesson.title}". 
         Reto: ${lesson.exercise}
         Código/Respuesta del alumno: ${userCode}
@@ -99,7 +99,9 @@ const LessonViewer: React.FC<LessonViewerProps> = ({ lesson, onBack, onComplete,
                 feedback.success ? 'bg-green-50 border-green-500 text-green-800' : 'bg-orange-50 border-orange-500 text-orange-800'
               }`}>
                 <h4 className="font-bold text-xl mb-2">{feedback.success ? '¡Muy bien! 🎉' : 'Sigue intentándolo 💪'}</h4>
-                <p className="whitespace-pre-wrap">{feedback.message}</p>
+                <div className="prose prose-sm max-w-none">
+                  <ReactMarkdown>{feedback.message}</ReactMarkdown>
+                </div>
               </div>
             )}
           </div>

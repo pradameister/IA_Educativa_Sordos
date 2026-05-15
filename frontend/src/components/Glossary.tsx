@@ -10,37 +10,37 @@ const terms: GlossaryTerm[] = [
   {
     term: 'Clase',
     definition: 'Es como un molde o plantilla para crear objetos. Define qué características y acciones tendrán.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Clase'
+    signImage: '🏗️'
   },
   {
     term: 'Objeto',
     definition: 'Es una cosa real creada a partir de una clase. Por ejemplo, si la clase es "Coche", el objeto es tu coche rojo.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Objeto'
+    signImage: '🚗'
   },
   {
     term: 'Herencia',
     definition: 'Es cuando una clase hija recibe las características y acciones de una clase padre.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Herencia'
+    signImage: '👪'
   },
   {
     term: 'Encapsulamiento',
     definition: 'Es proteger la información dentro de un objeto para que no se cambie por error. Como una caja fuerte.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Encapsulamiento'
+    signImage: '🔒'
   },
   {
     term: 'Polimorfismo',
     definition: 'Es cuando una misma acción (como "reproducir") se comporta diferente según quién la haga.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Polimorfismo'
+    signImage: '🎭'
   },
   {
     term: 'Método',
     definition: 'Es una acción que un objeto puede realizar. Por ejemplo: acelerar, frenar, saludar.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Método'
+    signImage: '⚙️'
   },
   {
     term: 'Propiedad',
     definition: 'Es una característica de un objeto. Por ejemplo: color, marca, nombre, edad.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Propiedad'
+    signImage: '📋'
   }
 ];
 
@@ -75,12 +75,16 @@ const Glossary: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredTerms.map((t, index) => (
           <div key={index} className="bg-white rounded-xl shadow-md overflow-hidden flex hover:shadow-xl transition-shadow border border-purple-50">
-            <div className="w-1/3 bg-purple-100 flex items-center justify-center p-2">
-              <img 
-                src={t.signImage} 
-                alt={`Seña para ${t.term}`} 
-                className="rounded-lg object-cover h-32 w-full"
-              />
+            <div className="w-1/3 bg-purple-100 flex items-center justify-center p-4 text-5xl">
+              {t.signImage?.startsWith('http') ? (
+                <img 
+                  src={t.signImage} 
+                  alt={`Seña para ${t.term}`} 
+                  className="rounded-lg object-cover h-32 w-full"
+                />
+              ) : (
+                <span>{t.signImage}</span>
+              )}
             </div>
             <div className="w-2/3 p-4">
               <h3 className="text-xl font-bold text-purple-700 mb-2">{t.term}</h3>
