@@ -4,6 +4,47 @@ import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { ChatRequest, ChatResponse, ChatMessage } from 'shared';
 
+// Mapeo de conceptos de POO a emojis para referencia visual
+const POO_CONCEPTS = {
+  clase: '🏗️',
+  objeto: '📦',
+  herencia: '👨‍👩‍👧',
+  encapsulamiento: '🔒',
+  polimorfismo: '🎭',
+  metodo: '⚙️',
+  propiedad: '🏷️',
+  constructor: '🔨',
+  instancia: '✨',
+};
+
+// Función para procesar y enriquecer el contenido del mensaje con emojis
+const enrichMessageContent = (content: string): React.ReactNode => {
+  let enriched = content;
+  
+  const conceptRegex = new RegExp(
+    `\\b(${Object.keys(POO_CONCEPTS).join('|')})\\b`,
+    'gi'
+  );
+  
+  const parts = content.split(conceptRegex);
+  
+  return parts.map((part, index) => {
+    const lowerPart = part?.toLowerCase() || '';
+    const emoji = POO_CONCEPTS[lowerPart as keyof typeof POO_CONCEPTS];
+    
+    if (emoji) {
+      return (
+        <span key={index} className="inline-block">
+          <span className="font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded mx-1">
+            {emoji} {part}
+          </span>
+        </span>
+      );
+    }
+    return part;
+  });
+};
+
 const ChatInterface: React.FC = () => {
   const { messages, addMessage, clearMessages } = useChat();
   const [input, setInput] = useState('');
@@ -37,9 +78,13 @@ const ChatInterface: React.FC = () => {
       const response = await axios.post<ChatResponse>(`${API_URL}/api/chat`, payload);
 
       addMessage({ role: 'assistant', content: response.data.response });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error);
-      addMessage({ role: 'assistant', content: 'Lo siento, hubo un error al procesar tu mensaje.' });
+      const errorMessage = error.response?.data?.details || error.response?.data?.error || 'Error de conexión con el servidor.';
+      addMessage({ 
+        role: 'assistant', 
+        content: `Lo siento, hubo un error: ${errorMessage}` 
+      });
     } finally {
       setIsLoading(false);
     }
@@ -64,6 +109,14 @@ const ChatInterface: React.FC = () => {
         </button>
       </div>
 
+      {/* Barra de información sobre iconografía */}
+      <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-3 border-b border-indigo-200">
+        <p className="text-sm text-gray-700">
+          <span className="font-semibold">Conceptos de POO:</span> 
+          <span className="ml-2">🏗️ Clase • 📦 Objeto • 👨‍👩‍👧 Herencia • 🔒 Encapsulamiento • 🎭 Polimorfismo</span>
+        </p>
+      </div>
+
       {/* Área de Mensajes */}
       <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-gray-50/50 dark:bg-gray-950/50">
         {messages.length === 0 && !isLoading && (
@@ -86,9 +139,13 @@ const ChatInterface: React.FC = () => {
                   : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-tl-none border border-gray-100 dark:border-gray-700'
               }`}
             >
-              <div className={`prose prose-sm max-w-none ${msg.role === 'user' ? 'prose-invert' : 'dark:prose-invert prose-p:leading-relaxed'}`}>
-                <ReactMarkdown>{msg.content}</ReactMarkdown>
-              </div>
+              {msg.role === 'assistant' ? (
+                <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                  {enrichMessageContent(msg.content)}
+                </div>
+              ) : (
+                <div className="text-sm">{msg.content}</div>
+              )}
             </div>
           </div>
         ))}
@@ -115,7 +172,7 @@ const ChatInterface: React.FC = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Escribe tu duda..."
+            placeholder="Escribe tu duda sobre POO aquí..."
             className="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all text-sm md:text-base"
             disabled={isLoading}
           />
@@ -130,6 +187,9 @@ const ChatInterface: React.FC = () => {
             </svg>
           </button>
         </div>
+        <p className="text-xs text-gray-500 mt-2">
+          💡 Consejo: Usa palabras como "clase", "objeto", "herencia" para obtener respuestas más visuales
+        </p>
       </div>
     </div>
   );

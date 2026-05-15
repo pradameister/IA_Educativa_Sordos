@@ -1,30 +1,50 @@
-import Groq from 'groq-sdk';
-import { ChatMessage } from 'shared';
+import axios from 'axios'
 
-export { ChatMessage };
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini'
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY;
+if (!OPENAI_API_KEY) {
+  console.warn('OPENAI_API_KEY not set — OpenAI requests will fail')
+}
 
-const groq = new Groq({
-  apiKey: GROQ_API_KEY || '',
-});
+import { ChatMessage } from 'shared'
+export { ChatMessage }
 
 export async function getAIResponse(messages: ChatMessage[]) {
-  if (!GROQ_API_KEY) throw new Error('GROQ_API_KEY no definida');
+  if (!OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY is not defined')
+  }
+
+  const payload = {
+    model: OPENAI_MODEL,
+    messages,
+    temperature: 0.2,
+    max_tokens: 800,
+  }
 
   try {
-    const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      messages: messages.map(m => ({
-        role: m.role as 'system' | 'user' | 'assistant',
-        content: m.content
-      })),
-      temperature: 0.7,
-      max_tokens: 1024,
-    });
+    const resp = await axios.post('https://api.openai.com/v1/chat/completions', payload, {
+      headers: {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      timeout: 60000,
+    })
 
-    return response.choices[0].message.content || 'Sin respuesta de la IA';
+    const data = resp.data
+    const text = data?.choices?.[0]?.message?.content
+    
+    if (!text) {
+      console.error('OpenAI response format error:', JSON.stringify(data))
+      throw new Error('Formato de respuesta de OpenAI no reconocido')
+    }
+
+    return String(text)
   } catch (error: any) {
-    throw new Error(`Error de Groq: ${error.message}`);
+    if (error.response) {
+      console.error('OpenAI API Error:', error.response.status, error.response.data)
+      throw new Error(`Error de OpenAI: ${error.response.data?.error?.message || error.response.statusText}`)
+    }
+    throw error
   }
 }

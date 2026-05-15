@@ -20,7 +20,7 @@ export interface ChatResponse {
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
 
 export interface Lesson {
-  id: number;
+  id: string;
   title: string;
   description: string;
   difficulty: Difficulty;
@@ -40,7 +40,7 @@ export interface User {
   username: string;
   email: string;
   progress: {
-    completedLessons: number[];
+    completedLessons: string[];
     currentLevel: string;
   };
 }
