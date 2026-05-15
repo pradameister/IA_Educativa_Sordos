@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useChat } from '../context/ChatContext';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 import { ChatRequest, ChatResponse, ChatMessage } from 'shared';
 
 const ChatInterface: React.FC = () => {
@@ -49,7 +50,13 @@ const ChatInterface: React.FC = () => {
                   : 'bg-gray-200 text-gray-800 rounded-bl-none'
               }`}
             >
-              {msg.content}
+              {msg.role === 'assistant' ? (
+                <div className="prose prose-sm max-w-none prose-p:leading-relaxed">
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                </div>
+              ) : (
+                msg.content
+              )}
             </div>
           </div>
         ))}
