@@ -11,6 +11,7 @@ function App() {
   const [view, setView] = useState<'home' | 'lessons' | 'chat' | 'glossary'>('home')
   const [isAuthenticated, setIsAuthenticated] = useState(authService.isAuthenticated())
   const [user, setUser] = useState<any>(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -24,139 +25,135 @@ function App() {
     setIsAuthenticated(false)
     setUser(null)
     setView('home')
+    setIsMenuOpen(false)
+  }
+
+  const navigate = (newView: 'home' | 'lessons' | 'chat' | 'glossary') => {
+    setView(newView)
+    setIsMenuOpen(false)
   }
 
   return (
     <ChatProvider>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        {/* Navbar */}
-        <nav className="bg-white shadow-md">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-indigo-600">IA Educativa 🧑‍🎓</h1>
-            <div className="flex items-center gap-6">
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setView('home')}
-                  className={`px-4 py-2 rounded transition-colors ${
-                    view === 'home'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                  }`}
-                >
-                  Inicio
-                </button>
-                <button
-                  onClick={() => setView('lessons')}
-                  className={`px-4 py-2 rounded transition-colors ${
-                    view === 'lessons'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                  }`}
-                >
-                  Lecciones
-                </button>
-                <button
-                  onClick={() => setView('chat')}
-                  className={`px-4 py-2 rounded transition-colors ${
-                    view === 'chat'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                  }`}
-                >
-                  Chat
-                </button>
-                <button
-                  onClick={() => setView('glossary')}
-                  className={`px-4 py-2 rounded transition-colors ${
-                    view === 'glossary'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                  }`}
-                >
-                  Glosario
-                </button>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
+        {/* Navbar Responsivo */}
+        <nav className="bg-white shadow-md sticky top-0 z-50">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center cursor-pointer" onClick={() => navigate('home')}>
+                <span className="text-xl md:text-2xl font-bold text-indigo-600">IA Educativa 🧑‍🎓</span>
               </div>
               
-              {isAuthenticated ? (
-                <div className="flex items-center gap-4 border-l pl-6">
-                  <span className="text-sm font-semibold text-gray-600">Hola, {user?.username}</span>
-                  <button 
-                    onClick={handleLogout}
-                    className="text-sm text-red-600 hover:underline"
-                  >
-                    Salir
-                  </button>
-                </div>
-              ) : (
-                <div className="border-l pl-6">
-                  <button 
-                    onClick={() => setView('home')}
-                    className="text-sm font-bold text-indigo-600 hover:underline"
-                  >
-                    Iniciar Sesión
-                  </button>
-                </div>
-              )}
+              {/* Botón menú móvil */}
+              <div className="md:hidden">
+                <button 
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="text-gray-600 hover:text-indigo-600 focus:outline-none"
+                >
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    {isMenuOpen ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    ) : (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    )}
+                  </svg>
+                </button>
+              </div>
+
+              {/* Menú Desktop */}
+              <div className="hidden md:flex items-center gap-4">
+                <button onClick={() => navigate('home')} className={`px-3 py-2 rounded-md text-sm font-medium ${view === 'home' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>Inicio</button>
+                <button onClick={() => navigate('lessons')} className={`px-3 py-2 rounded-md text-sm font-medium ${view === 'lessons' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>Lecciones</button>
+                <button onClick={() => navigate('chat')} className={`px-3 py-2 rounded-md text-sm font-medium ${view === 'chat' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>Chat</button>
+                <button onClick={() => navigate('glossary')} className={`px-3 py-2 rounded-md text-sm font-medium ${view === 'glossary' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>Glosario</button>
+                
+                {isAuthenticated ? (
+                  <div className="flex items-center gap-4 ml-4 border-l pl-4">
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{user?.username}</span>
+                    <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-800 font-semibold">Salir</button>
+                  </div>
+                ) : (
+                  <button onClick={() => navigate('home')} className="ml-4 text-sm font-bold text-indigo-600 hover:text-indigo-800">Iniciar Sesión</button>
+                )}
+              </div>
             </div>
           </div>
+
+          {/* Menú Móvil */}
+          {isMenuOpen && (
+            <div className="md:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-4 space-y-1 shadow-lg">
+              <button onClick={() => navigate('home')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-indigo-50">Inicio</button>
+              <button onClick={() => navigate('lessons')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-indigo-50">Lecciones</button>
+              <button onClick={() => navigate('chat')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-indigo-50">Chat</button>
+              <button onClick={() => navigate('glossary')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-indigo-50">Glosario</button>
+              {isAuthenticated ? (
+                <div className="pt-4 border-t border-gray-100 mt-2">
+                  <div className="px-3 py-2 text-sm font-bold text-gray-500 uppercase">{user?.username}</div>
+                  <button onClick={handleLogout} className="block w-full text-left px-3 py-2 text-base font-medium text-red-600">Cerrar Sesión</button>
+                </div>
+              ) : (
+                <button onClick={() => navigate('home')} className="block w-full text-left px-3 py-2 text-base font-medium text-indigo-600">Iniciar Sesión</button>
+              )}
+            </div>
+          )}
         </nav>
 
-        {/* Main Content */}
-        <div className="container mx-auto px-4 py-8">
-          {view === 'home' && (
-            !isAuthenticated ? (
-              <AuthForms onLoginSuccess={() => setIsAuthenticated(true)} />
-            ) : (
-              <div className="bg-white rounded-lg shadow-lg p-8">
-                <h2 className="text-4xl font-bold text-gray-800 mb-4">
-                  ¡Bienvenido a IA Educativa para Personas Sordas!
-                </h2>
-                <p className="text-lg text-gray-600 mb-6">
-                  Una plataforma interactiva de aprendizaje de programación orientada a objetos con
-                  accesibilidad completa.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                  <div className="bg-blue-50 rounded-lg p-6 cursor-pointer hover:bg-blue-100 transition-colors" onClick={() => setView('lessons')}>
-                    <h3 className="text-2xl font-bold text-indigo-600 mb-2">📚 Lecciones</h3>
-                    <p className="text-gray-600">
-                      Aprende programación orientada a objetos de forma interactiva
-                    </p>
-                  </div>
-                  <div className="bg-green-50 rounded-lg p-6 cursor-pointer hover:bg-green-100 transition-colors" onClick={() => setView('chat')}>
-                    <h3 className="text-2xl font-bold text-indigo-600 mb-2">🤖 Profesor IA</h3>
-                    <p className="text-gray-600">
-                      Un profesor virtual inteligente que se adapta a tu ritmo
-                    </p>
-                  </div>
-                  <div className="bg-purple-50 rounded-lg p-6">
-                    <h3 className="text-2xl font-bold text-indigo-600 mb-2">♿ Accesible</h3>
-                    <p className="text-gray-600">
-                      Diseñado específicamente para personas sordas
-                    </p>
+        {/* Contenedor Principal Consistente */}
+        <main className="flex-grow w-full max-w-6xl mx-auto px-4 py-6 md:py-10">
+          <div className="w-full animate-fadeIn">
+            {view === 'home' && (
+              !isAuthenticated ? (
+                <AuthForms onLoginSuccess={() => setIsAuthenticated(true)} />
+              ) : (
+                <div className="bg-white rounded-2xl shadow-xl p-6 md:p-12 border border-gray-100">
+                  <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
+                    ¡Bienvenido a tu <span className="text-indigo-600">Futuro Digital</span>! ♿
+                  </h2>
+                  <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl">
+                    Aprende programación orientada a objetos con un profesor IA diseñado para ser 100% visual y accesible.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="bg-blue-50 rounded-xl p-6 cursor-pointer hover:shadow-md transition-all transform hover:-translate-y-1" onClick={() => navigate('lessons')}>
+                      <div className="text-3xl mb-4">📚</div>
+                      <h3 className="text-xl font-bold text-indigo-900 mb-2">Lecciones</h3>
+                      <p className="text-sm text-indigo-700">Explora conceptos de POO con retos interactivos.</p>
+                    </div>
+                    <div className="bg-green-50 rounded-xl p-6 cursor-pointer hover:shadow-md transition-all transform hover:-translate-y-1" onClick={() => navigate('chat')}>
+                      <div className="text-3xl mb-4">🤖</div>
+                      <h3 className="text-xl font-bold text-green-900 mb-2">Profesor IA</h3>
+                      <p className="text-sm text-green-700">Resuelve tus dudas en tiempo real con nuestra IA.</p>
+                    </div>
+                    <div className="bg-purple-50 rounded-xl p-6 hover:shadow-sm transition-all">
+                      <div className="text-3xl mb-4">♿</div>
+                      <h3 className="text-xl font-bold text-purple-900 mb-2">Accesibilidad</h3>
+                      <p className="text-sm text-purple-700">Diseñado por y para la comunidad sorda.</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
-          )}
+              )
+            )}
 
-          {view === 'lessons' && (
-            isAuthenticated ? <LessonsList /> : <AuthForms onLoginSuccess={() => setIsAuthenticated(true)} />
-          )}
+            {view === 'lessons' && (
+              isAuthenticated ? <LessonsList /> : <AuthForms onLoginSuccess={() => setIsAuthenticated(true)} />
+            )}
 
-          {view === 'chat' && (
-            isAuthenticated ? <ChatInterface /> : <AuthForms onLoginSuccess={() => setIsAuthenticated(true)} />
-          )}
+            {view === 'chat' && (
+              isAuthenticated ? <ChatInterface /> : <AuthForms onLoginSuccess={() => setIsAuthenticated(true)} />
+            )}
 
-          {view === 'glossary' && (
-            isAuthenticated ? <Glossary /> : <AuthForms onLoginSuccess={() => setIsAuthenticated(true)} />
-          )}
-        </div>
+            {view === 'glossary' && (
+              isAuthenticated ? <Glossary /> : <AuthForms onLoginSuccess={() => setIsAuthenticated(true)} />
+            )}
+          </div>
+        </main>
 
         {/* Footer */}
-        <footer className="bg-gray-800 text-white text-center py-6 mt-12">
-          <p>
-            © 2024 IA Educativa para Personas Sordas • Construyamos educación inclusiva juntos ♿
-          </p>
+        <footer className="bg-white border-t border-gray-200 py-8">
+          <div className="max-w-6xl mx-auto px-4 text-center">
+            <p className="text-gray-500 text-sm">
+              © 2024 IA Educativa para Personas Sordas • Educación Inclusiva ♿
+            </p>
+          </div>
         </footer>
       </div>
     </ChatProvider>
