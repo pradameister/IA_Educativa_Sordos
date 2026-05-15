@@ -5,7 +5,7 @@ import { ChatMessage } from 'shared';
 interface ChatContextType {
   messages: ChatMessage[];
   addMessage: (message: ChatMessage) => void;
-  clearMessages: () => void;
+  clearMessages: () => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -36,8 +36,18 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setMessages((prev) => [...prev, message]);
   };
 
-  const clearMessages = () => {
-    setMessages([]);
+  const clearMessages = async () => {
+    if (window.confirm('¿Estás seguro de que quieres vaciar todo el historial de chat? Esta acción no se puede deshacer.')) {
+      try {
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        await axios.delete(`${API_URL}/api/chat/history`);
+        setMessages([]);
+      } catch (error) {
+        console.error('Error clearing messages:', error);
+        // Aún así limpiamos localmente por UX
+        setMessages([]);
+      }
+    }
   };
 
   return (

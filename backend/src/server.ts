@@ -77,6 +77,18 @@ const chatHistoryHandler = async (req: AuthRequest, res: Response) => {
 app.get('/api/chat/history', authMiddleware, chatHistoryHandler);
 app.get('/chat/history', authMiddleware, chatHistoryHandler);
 
+// Delete Chat History
+const deleteChatHistoryHandler = async (req: AuthRequest, res: Response) => {
+  try {
+    await Message.deleteMany({ user: req.userId });
+    res.json({ message: 'Historial eliminado' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar historial' });
+  }
+};
+app.delete('/api/chat/history', authMiddleware, deleteChatHistoryHandler);
+app.delete('/chat/history', authMiddleware, deleteChatHistoryHandler);
+
 // Lessons List
 const lessonsHandler = async (req: Request, res: Response) => {
   try {
