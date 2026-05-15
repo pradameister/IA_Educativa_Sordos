@@ -25,12 +25,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// 2. Conexión y Seed
+// 2. Conexión y Seed automático
 connectDB().then(async () => {
   try {
     const count = await Lesson.countDocuments();
     if (count === 0) {
-      console.log('🌱 Ejecutando seed...');
+      console.log('🌱 Ejecutando seed de lecciones...');
       const initialLessons = [
         {
           title: 'Introducción a la Programación Orientada a Objetos',
@@ -40,14 +40,26 @@ connectDB().then(async () => {
           content: `¡Hola! Bienvenido a tu primera lección de POO.`,
           exercise: '¿Qué es un objeto?',
           expectedCode: 'objeto'
+        },
+        {
+          title: 'Clases y Objetos',
+          description: 'Aprende a crear clases e instanciar objetos',
+          difficulty: 'beginner',
+          topic: 'POO',
+          content: `Las clases son moldes y los objetos son las instancias reales.`,
+          exercise: 'Crea una clase Persona.',
+          expectedCode: 'class Persona'
         }
       ];
       await Lesson.insertMany(initialLessons);
+      console.log('✅ Seed completado');
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error('❌ Error en seed:', e);
+  }
 });
 
-// 3. Definición de Rutas (Soportando con y sin /api)
+// 3. Definición de Rutas
 
 // Auth
 app.use('/api/auth', authRoutes);
@@ -65,7 +77,7 @@ const chatHistoryHandler = async (req: AuthRequest, res: Response) => {
 app.get('/api/chat/history', authMiddleware, chatHistoryHandler);
 app.get('/chat/history', authMiddleware, chatHistoryHandler);
 
-// Lessons
+// Lessons List
 const lessonsHandler = async (req: Request, res: Response) => {
   try {
     const lessons = await Lesson.find();
@@ -76,6 +88,41 @@ const lessonsHandler = async (req: Request, res: Response) => {
 };
 app.get('/api/lessons', lessonsHandler);
 app.get('/lessons', lessonsHandler);
+
+// Complete Lesson
+const completeLessonHandler = async (req: AuthRequest, res: Response) => {
+  console.log(`📝 Intento de completar lección. User: ${req.userId}, Lesson: ${req.params.id}`);
+  try {
+    const lessonId = req.params.id;
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const alreadyCompleted = user.progress.completedLessons.some(id => id.toString() === lessonId);
+    if (!alreadyCompleted) {
+      user.progress.completedLessons.push(lessonId as any);
+      await user.save();
+      console.log('✅ Lección guardada');
+    }
+    res.json({ message: 'OK', progress: user.progress });
+  } catch (error: any) {
+    console.error('❌ Error en complete:', error.message);
+    res.status(500).json({ error: 'Error progress' });
+  }
+};
+app.post('/api/lessons/:id/complete', authMiddleware, completeLessonHandler);
+app.post('/lessons/:id/complete', authMiddleware, completeLessonHandler);
+
+// User Progress
+const progressHandler = async (req: AuthRequest, res: Response) => {
+  try {
+    const user = await User.findById(req.userId).populate('progress.completedLessons');
+    res.json({ progress: user?.progress });
+  } catch (error) {
+    res.status(500).json({ error: 'Error progress fetch' });
+  }
+};
+app.get('/api/user/progress', authMiddleware, progressHandler);
+app.get('/user/progress', authMiddleware, progressHandler);
 
 // Chat AI
 const chatHandler = async (req: AuthRequest, res: Response) => {
@@ -96,15 +143,10 @@ app.post('/chat', authMiddleware, chatHandler);
 app.get('/health', (req, res) => res.json({ status: 'OK' }));
 app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
 
-// 4. Manejador 404 Detallado
+// 4. Manejador 404
 app.use((req, res) => {
-  const fullUrl = `${req.method} ${req.url}`;
-  console.log(`❌ 404 detectado en: ${fullUrl}`);
-  res.status(404).json({ 
-    error: 'Ruta no encontrada', 
-    requestedUrl: fullUrl,
-    hint: 'Verifica si la URL en el frontend coincide con las rutas del backend.'
-  });
+  console.log(`❌ 404 detectado en: ${req.method} ${req.url}`);
+  res.status(404).json({ error: 'Ruta no encontrada', url: req.url });
 });
 
 app.listen(PORT, () => console.log(`🚀 Servidor listo en puerto ${PORT}`));

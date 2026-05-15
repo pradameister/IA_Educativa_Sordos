@@ -35,11 +35,16 @@ const LessonsList: React.FC = () => {
   }, [API_URL]);
 
   const handleComplete = async (lessonId: string) => {
+    console.log('🎯 Intentando completar lección ID:', lessonId);
     try {
-      await axios.post(`${API_URL}/api/lessons/${lessonId}/complete`);
+      const response = await axios.post(`${API_URL}/api/lessons/${lessonId}/complete`);
+      console.log('✅ Respuesta del servidor:', response.data);
       setCompletedIds(prev => [...prev, lessonId]);
-    } catch (error) {
-      console.error('Error completing lesson:', error);
+      // Forzar actualización visual
+      window.location.reload(); 
+    } catch (error: any) {
+      console.error('❌ Error detallado al completar:', error.response?.data || error.message);
+      alert('Hubo un error al guardar tu progreso. Revisa la consola.');
     }
   };
 
