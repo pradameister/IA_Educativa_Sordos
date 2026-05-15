@@ -14,7 +14,7 @@ export async function getAIResponse(messages: ChatMessage[]) {
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview", // O el modelo que prefieras, ej: gpt-3.5-turbo
+      model: "gpt-3.5-turbo",
       messages: messages.map(m => ({
         role: m.role as 'system' | 'user' | 'assistant',
         content: m.content
