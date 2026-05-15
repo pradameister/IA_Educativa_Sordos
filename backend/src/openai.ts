@@ -13,20 +13,19 @@ export async function getAIResponse(messages: ChatMessage[]) {
 
   try {
     // 1. Extraemos las instrucciones y los mensajes
-    const systemInstruction = messages.find(m => m.role === 'system')?.content || 'Eres un profesor de POO.';
+    const systemPrompt = messages.find(m => m.role === 'system')?.content || 'Eres un profesor de POO.';
     const userMessages = messages.filter(m => m.role !== 'system');
     const lastUserMessage = userMessages.pop()?.content || '';
 
-    // 2. Usamos el nombre de modelo más básico y compatible
-    // Si este falla, cambia "gemini-1.5-flash" por "gemini-pro"
+    // 2. Usamos el modelo Flash que es el más rápido
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // 3. PASO CLAVE: Iniciamos el chat con las instrucciones como si fueran el primer mensaje
-    // Esto es compatible con absolutamente todas las versiones de la API
+    // 3. Iniciamos el chat metiendo la instrucción como contexto inicial
+    // Esto funciona en TODAS las regiones y versiones
     const chat = model.startChat({
       history: [
-        { role: "user", parts: [{ text: `Instrucción importante: ${systemInstruction}` }] },
-        { role: "model", parts: [{ text: "Entendido. Hola, soy tu profesor virtual de Programación Orientada a Objetos. ¿En qué puedo ayudarte hoy?" }] },
+        { role: "user", parts: [{ text: `Instrucción: ${systemPrompt}` }] },
+        { role: "model", parts: [{ text: "Entendido, profesor virtual listo." }] },
         ...userMessages.map(m => ({
           role: m.role === 'assistant' ? 'model' : 'user',
           parts: [{ text: m.content }],
@@ -38,7 +37,7 @@ export async function getAIResponse(messages: ChatMessage[]) {
     return result.response.text();
 
   } catch (error: any) {
-    console.error('❌ Error detallado en Gemini API:', error);
-    throw new Error(`Error de Gemini: ${error.message || 'Error desconocido'}`);
+    console.error('❌ Error de Gemini:', error);
+    throw new Error(`Error de Gemini: ${error.message}`);
   }
 }
