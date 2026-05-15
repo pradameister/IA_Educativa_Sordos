@@ -6,6 +6,7 @@ import { ChatMessage, ChatRequest, ChatResponse, LessonsResponse } from 'shared'
 import { connectDB } from './db'
 import Lesson from './models/Lesson'
 import User from './models/User'
+import Message from './models/Message'
 import authRoutes from './auth'
 import { authMiddleware, AuthRequest } from './middleware'
 
@@ -166,6 +167,21 @@ app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'OK', message: 'Servidor funcionando correctamente' })
 })
 
+// --- HISTORIAL DE CHAT ---
+
+// Obtener historial de chat del usuario (Protegido)
+app.get('/api/chat/history', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const messages = await Message.find({ user: req.userId })
+      .sort({ createdAt: 1 })
+      .limit(50); // Limitamos a los últimos 50 mensajes por rendimiento
+    
+    res.json({ history: messages });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener el historial de chat' });
+  }
+});
+
 // Lecciones
 app.get('/api/lessons', async (req: Request, res: Response) => {
   try {
@@ -210,6 +226,13 @@ REGLAS DE FORMATO:
     ]
 
     const aiResponse = await getAIResponse(messages)
+
+    // Guardar la interacción en la base de datos de forma asíncrona
+    Promise.all([
+      Message.create({ user: req.userId, role: 'user', content: message.trim() }),
+      Message.create({ user: req.userId, role: 'assistant', content: aiResponse })
+    ]).catch(err => console.error('Error al guardar mensajes en DB:', err));
+
     res.json({ response: aiResponse })
   } catch (error: any) {
     console.error('❌ Chat error:', error.message)
