@@ -3,6 +3,7 @@ import { useChat } from '../context/ChatContext';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { ChatRequest, ChatResponse, ChatMessage } from 'shared';
+import { authService } from '../services/auth';
 
 // Mapeo de conceptos de POO a emojis para referencia visual
 const POO_CONCEPTS = {
@@ -46,7 +47,7 @@ const enrichMessageContent = (content: string): React.ReactNode => {
 };
 
 const ChatInterface: React.FC = () => {
-  const { messages, addMessage, clearMessages } = useChat();
+  const { messages, addMessage, clearMessages, isLoadingHistory } = useChat();
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -61,6 +62,10 @@ const ChatInterface: React.FC = () => {
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
+    if (!authService.isAuthenticated()) {
+      addMessage({ role: 'assistant', content: '⚠️ Debes iniciar sesión para usar el chat.' });
+      return;
+    }
 
     const userMessage: ChatMessage = { role: 'user', content: input };
     addMessage(userMessage);
@@ -75,20 +80,28 @@ const ChatInterface: React.FC = () => {
       };
 
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      // El interceptor de axios en auth.ts ya añade el token
       const response = await axios.post<ChatResponse>(`${API_URL}/api/chat`, payload);
 
       addMessage({ role: 'assistant', content: response.data.response });
     } catch (error: any) {
       console.error('Error sending message:', error);
-      const errorMessage = error.response?.data?.details || error.response?.data?.error || 'Error de conexión con el servidor.';
-      addMessage({ 
-        role: 'assistant', 
-        content: `Lo siento, hubo un error: ${errorMessage}` 
-      });
+      const errorMsg = error.response?.data?.error === 'Token inválido' 
+        ? '⚠️ Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.'
+        : 'Lo siento, hubo un error al procesar tu mensaje. Inténtalo de nuevo.';
+      addMessage({ role: 'assistant', content: errorMsg });
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (isLoadingHistory) {
+    return (
+      <div className="flex items-center justify-center h-[650px] bg-white dark:bg-gray-900 rounded-2xl">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-180px)] md:h-[650px] bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
@@ -124,6 +137,11 @@ const ChatInterface: React.FC = () => {
             <div className="text-5xl mb-4 animate-bounce">👋</div>
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">¡Hola! Soy tu Profesor IA</h3>
             <p className="text-gray-500 dark:text-gray-400 max-w-xs">¿Tienes alguna duda sobre clases, objetos o herencia? ¡Pregúntame lo que quieras!</p>
+            <div className="mt-6 grid grid-cols-1 gap-2 text-xs">
+              <div className="bg-indigo-50 dark:bg-indigo-900/30 p-2 rounded-lg border border-indigo-100 dark:border-indigo-800">
+                Uso esquemas visuales: 🏗️ ➔ 🚗
+              </div>
+            </div>
           </div>
         )}
         

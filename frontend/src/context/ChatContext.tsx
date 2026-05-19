@@ -1,20 +1,28 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import axios from 'axios';
 import { ChatMessage } from 'shared';
+import { authService } from '../services/auth';
 
 interface ChatContextType {
   messages: ChatMessage[];
   addMessage: (message: ChatMessage) => void;
   clearMessages: () => Promise<void>;
+  isLoadingHistory: boolean;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
 
   useEffect(() => {
     const fetchHistory = async () => {
+      if (!authService.isAuthenticated()) {
+        setIsLoadingHistory(false);
+        return;
+      }
+
       try {
         const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         const response = await axios.get(`${API_URL}/api/chat/history`);
@@ -26,6 +34,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
       } catch (error) {
         console.error('Error fetching chat history:', error);
+      } finally {
+        setIsLoadingHistory(false);
       }
     };
 
@@ -37,6 +47,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const clearMessages = async () => {
+    if (!authService.isAuthenticated()) return;
+    
     if (window.confirm('¿Estás seguro de que quieres vaciar todo el historial de chat? Esta acción no se puede deshacer.')) {
       try {
         const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -51,7 +63,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <ChatContext.Provider value={{ messages, addMessage, clearMessages }}>
+    <ChatContext.Provider value={{ messages, addMessage, clearMessages, isLoadingHistory }}>
       {children}
     </ChatContext.Provider>
   );
