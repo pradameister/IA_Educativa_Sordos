@@ -14,95 +14,56 @@ const terms: GlossaryTerm[] = [
     term: 'Clase',
     emoji: '🏗️',
     definition: 'Es como un molde o plantilla para crear objetos. Define qué características y acciones tendrán.',
-<<<<<<< HEAD
-    signImage: '/assets/signs/clase.gif' // Intentará cargar el GIF, si no existe mostrará el icono por defecto
-=======
     analogy: 'Imagina un molde de galletas. El molde es la clase, y cada galleta es un objeto.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Clase',
+    signImage: '/assets/signs/clase.gif',
     category: 'core'
->>>>>>> cb16109 (feat: Mejoras de accesibilidad visual en el chat y glosario)
   },
   {
     term: 'Objeto',
     emoji: '📦',
     definition: 'Es una cosa real creada a partir de una clase. Por ejemplo, si la clase es "Coche", el objeto es tu coche rojo.',
-<<<<<<< HEAD
-    signImage: '/assets/signs/objeto.gif'
-=======
     analogy: 'Si la clase es el plano de una casa, el objeto es la casa construida.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Objeto',
+    signImage: '/assets/signs/objeto.gif',
     category: 'core'
->>>>>>> cb16109 (feat: Mejoras de accesibilidad visual en el chat y glosario)
   },
   {
     term: 'Herencia',
     emoji: '👨‍👩‍👧',
     definition: 'Es cuando una clase hija recibe las características y acciones de una clase padre.',
-<<<<<<< HEAD
-    signImage: '/assets/signs/herencia.gif'
-=======
     analogy: 'Así como heredas el color de ojos de tus padres, una clase hija hereda propiedades de su clase padre.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Herencia',
+    signImage: '/assets/signs/herencia.gif',
     category: 'core'
->>>>>>> cb16109 (feat: Mejoras de accesibilidad visual en el chat y glosario)
   },
   {
     term: 'Encapsulamiento',
     emoji: '🔒',
     definition: 'Es proteger la información dentro de un objeto para que no se cambie por error. Como una caja fuerte.',
-<<<<<<< HEAD
-    signImage: '/assets/signs/encapsulamiento.gif'
-=======
     analogy: 'Es como guardar dinero en una caja fuerte. Solo tú tienes la llave para acceder.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Encapsulamiento',
+    signImage: '/assets/signs/encapsulamiento.gif',
     category: 'core'
->>>>>>> cb16109 (feat: Mejoras de accesibilidad visual en el chat y glosario)
   },
   {
     term: 'Polimorfismo',
     emoji: '🎭',
     definition: 'Es cuando una misma acción (como "reproducir") se comporta diferente según quién la haga.',
-<<<<<<< HEAD
-    signImage: '/assets/signs/polimorfismo.gif'
-=======
     analogy: 'Un botón de "reproducir" funciona diferente en un reproductor de música vs. un reproductor de video.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Polimorfismo',
+    signImage: '/assets/signs/polimorfismo.gif',
     category: 'core'
->>>>>>> cb16109 (feat: Mejoras de accesibilidad visual en el chat y glosario)
   },
   {
     term: 'Método',
     emoji: '⚙️',
     definition: 'Es una acción que un objeto puede realizar. Por ejemplo: acelerar, frenar, saludar.',
-<<<<<<< HEAD
-    signImage: '/assets/signs/metodo.gif'
-=======
     analogy: 'Son como los botones de un control remoto. Cada botón hace una acción diferente.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Método',
+    signImage: '/assets/signs/metodo.gif',
     category: 'methods'
->>>>>>> cb16109 (feat: Mejoras de accesibilidad visual en el chat y glosario)
   },
   {
     term: 'Propiedad',
     emoji: '🏷️',
     definition: 'Es una característica de un objeto. Por ejemplo: color, marca, nombre, edad.',
-<<<<<<< HEAD
-    signImage: '/assets/signs/propiedad.gif'
-  }
-];
-
-// Mapeo de iconos de respaldo si no hay imagen
-const fallbackIcons: Record<string, string> = {
-  'Clase': '🏗️',
-  'Objeto': '🚗',
-  'Herencia': '👪',
-  'Encapsulamiento': '🔒',
-  'Polimorfismo': '🎭',
-  'Método': '⚙️',
-  'Propiedad': '📋'
-=======
     analogy: 'Son como las etiquetas de un producto. Cada etiqueta describe algo del objeto.',
-    signImage: 'https://via.placeholder.com/150?text=Seña+Propiedad',
+    signImage: '/assets/signs/propiedad.gif',
     category: 'core'
   },
   {
@@ -147,11 +108,14 @@ const fallbackIcons: Record<string, string> = {
   }
 ];
 
-const categoryLabels = {
-  core: '🎯 Conceptos Principales',
-  advanced: '🚀 Conceptos Avanzados',
-  methods: '⚙️ Métodos y Acciones'
->>>>>>> cb16109 (feat: Mejoras de accesibilidad visual en el chat y glosario)
+const fallbackIcons: Record<string, string> = {
+  'Clase': '🏗️',
+  'Objeto': '🚗',
+  'Herencia': '👪',
+  'Encapsulamiento': '🔒',
+  'Polimorfismo': '🎭',
+  'Método': '⚙️',
+  'Propiedad': '📋'
 };
 
 const Glossary: React.FC = () => {
@@ -173,16 +137,7 @@ const Glossary: React.FC = () => {
   };
 
   return (
-<<<<<<< HEAD
-    <div className="max-w-4xl mx-auto space-y-8 animate-fadeIn">
-      <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg border-t-4 border-purple-500">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-          📖 Glosario de Señas POO
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Aprende los conceptos clave de la Programación Orientada a Objetos con explicaciones sencillas y apoyo visual en Lengua de Señas.
-=======
-    <div className="max-w-5xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-8 animate-fadeIn">
       {/* Encabezado */}
       <div className="bg-gradient-to-r from-purple-500 to-indigo-600 p-8 rounded-xl shadow-lg text-white">
         <h2 className="text-4xl font-bold mb-2 flex items-center gap-3">
@@ -190,22 +145,16 @@ const Glossary: React.FC = () => {
         </h2>
         <p className="text-purple-100 text-lg">
           Aprende los conceptos clave de la Programación Orientada a Objetos con explicaciones sencillas, emojis visuales y analogías para facilitar la comprensión.
->>>>>>> cb16109 (feat: Mejoras de accesibilidad visual en el chat y glosario)
         </p>
       </div>
 
       {/* Barra de búsqueda y filtros */}
-      <div className="bg-white p-6 rounded-xl shadow-md space-y-4">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md space-y-4">
         <div className="relative">
           <input 
             type="text"
-<<<<<<< HEAD
-            placeholder="Buscar término (ej. Herencia)..."
-            className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-purple-100 dark:border-purple-900/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 dark:text-white transition-all"
-=======
             placeholder="Buscar término (ej. Herencia, Constructor)..."
-            className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-lg"
->>>>>>> cb16109 (feat: Mejoras de accesibilidad visual en el chat y glosario)
+            className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-purple-100 dark:border-purple-900/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 dark:text-white transition-all text-lg"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -219,7 +168,7 @@ const Glossary: React.FC = () => {
             className={`px-4 py-2 rounded-lg font-semibold transition-all ${
               selectedCategory === 'all'
                 ? 'bg-purple-600 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
             }`}
           >
             📚 Todos
@@ -229,7 +178,7 @@ const Glossary: React.FC = () => {
             className={`px-4 py-2 rounded-lg font-semibold transition-all ${
               selectedCategory === 'core'
                 ? 'bg-purple-600 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
             }`}
           >
             🎯 Principales
@@ -239,7 +188,7 @@ const Glossary: React.FC = () => {
             className={`px-4 py-2 rounded-lg font-semibold transition-all ${
               selectedCategory === 'advanced'
                 ? 'bg-purple-600 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
             }`}
           >
             🚀 Avanzados
@@ -249,7 +198,7 @@ const Glossary: React.FC = () => {
             className={`px-4 py-2 rounded-lg font-semibold transition-all ${
               selectedCategory === 'methods'
                 ? 'bg-purple-600 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
             }`}
           >
             ⚙️ Métodos
@@ -257,49 +206,13 @@ const Glossary: React.FC = () => {
         </div>
       </div>
 
-<<<<<<< HEAD
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredTerms.map((t, index) => (
-          <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden flex hover:shadow-xl transition-all border border-purple-50 dark:border-gray-700 group">
-            <div className="w-1/3 bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center p-2 text-5xl group-hover:scale-110 transition-transform min-h-[120px]">
-              <img 
-                src={t.signImage} 
-                alt={`Seña para ${t.term}`} 
-                className="rounded-lg object-contain h-full w-full"
-                onError={(e) => {
-                  // Si la imagen falla, ponemos el emoji de respaldo
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const parent = target.parentElement;
-                  if (parent) {
-                    const span = document.createElement('span');
-                    span.innerText = fallbackIcons[t.term] || '📖';
-                    parent.appendChild(span);
-                  }
-                }}
-              />
-            </div>
-            <div className="w-2/3 p-4">
-              <h3 className="text-xl font-bold text-purple-700 dark:text-purple-400 mb-2">{t.term}</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                {t.definition}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {filteredTerms.length === 0 && (
-        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-          No se encontraron términos que coincidan con tu búsqueda.
-=======
       {/* Términos organizados por categoría */}
       {filteredTerms.length > 0 ? (
         <div className="space-y-8">
           {/* Conceptos Principales */}
           {groupedTerms.core.length > 0 && (
             <div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
                 🎯 Conceptos Principales
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -313,7 +226,7 @@ const Glossary: React.FC = () => {
           {/* Métodos y Acciones */}
           {groupedTerms.methods.length > 0 && (
             <div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
                 ⚙️ Métodos y Acciones
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -327,7 +240,7 @@ const Glossary: React.FC = () => {
           {/* Conceptos Avanzados */}
           {groupedTerms.advanced.length > 0 && (
             <div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
                 🚀 Conceptos Avanzados
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -339,11 +252,10 @@ const Glossary: React.FC = () => {
           )}
         </div>
       ) : (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500 text-lg">
+        <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <p className="text-gray-500 dark:text-gray-400 text-lg">
             No se encontraron términos que coincidan con tu búsqueda. 🔍
           </p>
->>>>>>> cb16109 (feat: Mejoras de accesibilidad visual en el chat y glosario)
         </div>
       )}
     </div>
@@ -353,34 +265,38 @@ const Glossary: React.FC = () => {
 // Componente para cada tarjeta de término
 const TermCard: React.FC<{ term: GlossaryTerm }> = ({ term }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow border-l-4 border-purple-500">
-      <div className="p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow border-l-4 border-purple-500 flex flex-col">
+      <div className="p-6 flex-grow">
         {/* Encabezado con emoji */}
         <div className="flex items-center gap-3 mb-3">
           <span className="text-4xl">{term.emoji}</span>
-          <h3 className="text-2xl font-bold text-purple-700">{term.term}</h3>
+          <h3 className="text-2xl font-bold text-purple-700 dark:text-purple-400">{term.term}</h3>
         </div>
 
         {/* Definición */}
-        <p className="text-gray-700 mb-3 leading-relaxed font-semibold">
+        <p className="text-gray-700 dark:text-gray-300 mb-3 leading-relaxed font-semibold">
           {term.definition}
         </p>
 
         {/* Analogía visual */}
-        <div className="bg-indigo-50 p-3 rounded-lg border-l-4 border-indigo-400">
-          <p className="text-sm text-gray-700">
-            <span className="font-semibold text-indigo-700">💡 Analogía:</span> {term.analogy}
+        <div className="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-lg border-l-4 border-indigo-400">
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="font-semibold text-indigo-700 dark:text-indigo-400">💡 Analogía:</span> {term.analogy}
           </p>
         </div>
 
-        {/* Imagen de seña (placeholder) */}
+        {/* Imagen de seña */}
         {term.signImage && (
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500 mb-2">Representación visual (próximamente con videos de señas):</p>
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Representación visual:</p>
             <img 
               src={term.signImage} 
               alt={`Seña para ${term.term}`} 
-              className="rounded-lg object-cover h-24 w-full bg-gray-100"
+              className="rounded-lg object-contain h-32 w-full bg-gray-100 dark:bg-gray-900"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = `https://via.placeholder.com/150?text=Seña+${term.term}`;
+              }}
             />
           </div>
         )}

@@ -21,7 +21,7 @@ console.log('Variables de entorno cargadas:', {
 
 const app: Express = express()
 connectDB()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3001
 
 // Middleware
 app.use(cors())

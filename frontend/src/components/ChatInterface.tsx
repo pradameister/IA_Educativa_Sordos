@@ -79,7 +79,7 @@ const ChatInterface: React.FC = () => {
         history: messages,
       };
 
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       // El interceptor de axios en auth.ts ya añade el token
       const response = await axios.post<ChatResponse>(`${API_URL}/api/chat`, payload);
 

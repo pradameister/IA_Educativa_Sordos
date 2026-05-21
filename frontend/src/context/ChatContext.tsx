@@ -24,7 +24,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       try {
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
         const response = await axios.get(`${API_URL}/api/chat/history`);
         if (response.data.history) {
           setMessages(response.data.history.map((m: any) => ({
@@ -51,7 +51,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     if (window.confirm('¿Estás seguro de que quieres vaciar todo el historial de chat? Esta acción no se puede deshacer.')) {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
         await axios.delete(`${API_URL}/api/chat/history`);
         setMessages([]);
       } catch (error) {

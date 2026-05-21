@@ -5,6 +5,10 @@
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "shared": ["../shared/src"]
+    },
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
