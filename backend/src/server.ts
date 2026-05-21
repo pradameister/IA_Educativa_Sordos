@@ -175,9 +175,10 @@ app.get('/api/user/progress', authMiddleware, async (req: AuthRequest, res: Resp
   }
 });
 
-// 404 handler
+// 404 handler - Debe ir después de todas las rutas
 app.use((req: Request, res: Response) => {
-  res.status(404).json({ error: 'Ruta no encontrada' })
+  console.log(`🔍 404 Not Found: ${req.method} ${req.url}`);
+  res.status(404).json({ error: 'Ruta no encontrada', path: req.url })
 })
 
 app.listen(PORT, () => {
