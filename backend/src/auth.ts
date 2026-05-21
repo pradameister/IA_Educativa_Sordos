@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from './models/User';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key';
+const getJwtSecret = () => process.env.JWT_SECRET || 'super-secret-key';
 
 // Register
 router.post('/register', async (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ router.post('/register', async (req: Request, res: Response) => {
     const user = new User({ username, email, password });
     await user.save();
 
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign({ id: user._id }, getJwtSecret(), { expiresIn: '1d' });
 
     res.status(201).json({
       token,
@@ -50,7 +50,7 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign({ id: user._id }, getJwtSecret(), { expiresIn: '1d' });
 
     res.json({
       token,

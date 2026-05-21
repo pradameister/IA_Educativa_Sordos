@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key';
+const getJwtSecret = () => process.env.JWT_SECRET || 'super-secret-key';
 
 export interface AuthRequest extends Request {
   userId?: string;
@@ -15,7 +15,7 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+    const decoded = jwt.verify(token, getJwtSecret()) as { id: string };
     req.userId = decoded.id;
     next();
   } catch (error) {

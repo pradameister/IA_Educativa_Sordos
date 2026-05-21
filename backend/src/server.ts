@@ -1,6 +1,8 @@
+import dotenv from 'dotenv'
+dotenv.config() // Cargar .env lo antes posible
+
 import express, { Express, Request, Response } from 'express'
 import cors from 'cors'
-import dotenv from 'dotenv'
 import { getAIResponse } from './openai'
 import { ChatMessage, ChatRequest, ChatResponse, LessonsResponse } from 'shared'
 import { connectDB } from './db'
@@ -8,8 +10,6 @@ import Lesson from './models/Lesson'
 import User from './models/User'
 import authRoutes from './auth'
 import { authMiddleware, AuthRequest } from './middleware'
-
-dotenv.config() // Cargar .env estándar para producción
 
 console.log('--- INICIANDO SERVIDOR ---');
 console.log('Variables de entorno cargadas:', {
